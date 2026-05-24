@@ -1,0 +1,27 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "pulse-moderation-os",
+  "realtime": true,
+  "redis": true,
+  "menu": {
+    "items": [
+      {
+        "label": "Open Pulse Command Center",
+        "description": "Launch the subreddit digital twin and moderation forecast dashboard",
+        "forUserType": "moderator",
+        "location": ["subreddit"],
+        "endpoint": "/internal/menu/open-pulse"
+      }
+    ]
+  },
+  "triggers": {
+    "onAppInstall": "/internal/triggers/app-install",
+    "onPostSubmit": "/internal/triggers/post-submit",
+    "onCommentSubmit": "/internal/triggers/comment-submit",
+    "onCommentReport": "/internal/triggers/comment-report",
+    "onPostReport": "/internal/triggers/post-report",
+    "onModAction": "/internal/triggers/mod-action",
+    "onAutomoderatorFilterPost": "/internal/triggers/automod-post",
+    "onAutomoderatorFilterComment": "/internal/triggers/automod-comment"
+  }
+}

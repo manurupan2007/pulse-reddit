@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: #050816;
+  --panel: rgba(10, 16, 35, 0.62);
+  --panel-strong: rgba(13, 20, 43, 0.82);
+  --line: rgba(165, 190, 255, 0.18);
+  --text: #ecf5ff;
+  --muted: #8fa6c9;
+  --accent: #37f4ff;
+  --cyan: #55a9ff;
+  --magenta: #c767ff;
+  --lime: #8dff95;
+  --amber: #ffbd59;
+  --danger: #ff6f91;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(85, 169, 255, 0.18), transparent 32%),
+    radial-gradient(circle at top right, rgba(199, 103, 255, 0.16), transparent 28%),
+    radial-gradient(circle at 50% 20%, rgba(55, 244, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, #050816 0%, #071122 48%, #04070f 100%);
+  color: var(--text);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 180px;
+  background: radial-gradient(circle at 50% 100%, rgba(55, 244, 255, 0.12), transparent 58%);
+  pointer-events: none;
+  animation: pulseAura 6s ease-in-out infinite;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 88%);
+  pointer-events: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.glass-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    var(--panel);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 24px 70px rgba(3, 10, 28, 0.45);
+}
+
+.panel-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 10%,
+    rgba(55, 244, 255, 0.08) 48%,
+    transparent 72%
+  );
+  transform: translateX(-100%);
+  animation: sweep 4.8s linear infinite;
+  pointer-events: none;
+}
+
+.metric-ring {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.12), transparent 62%),
+    conic-gradient(from 210deg, rgba(55, 244, 255, 0.1), rgba(85, 169, 255, 0.7), rgba(199, 103, 255, 0.45), rgba(55, 244, 255, 0.1));
+}
+
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+[data-sound-cue="risk-spike"] .glass-panel {
+  box-shadow:
+    0 24px 70px rgba(3, 10, 28, 0.45),
+    0 0 0 1px rgba(255, 111, 145, 0.08),
+    0 0 34px rgba(255, 111, 145, 0.08);
+}
+
+[data-sound-cue="story-advance"] .glass-panel {
+  box-shadow:
+    0 24px 70px rgba(3, 10, 28, 0.45),
+    0 0 0 1px rgba(55, 244, 255, 0.08),
+    0 0 38px rgba(55, 244, 255, 0.1);
+}
+
+@keyframes pulseAura {
+  0%, 100% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.52;
+    transform: scale(1.04);
+  }
+}
