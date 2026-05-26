@@ -79,7 +79,7 @@ type SimulateOptions = {
 
 // --- Constants & Config ---
 
-const SYSTEM_VERSION = "0.4.0-stable";
+const SYSTEM_VERSION = "1.0.4-stable";
 const DEFAULT_SUBREDDIT = "r/politics";
 const CATEGORIES = ["politics", "news", "meme", "support", "meta", "gaming", "tech", "culture"] as const;
 
@@ -121,17 +121,17 @@ function pseudoRandom(seed: number): number {
  * Uses a seed-based approach to ensure deterministic results for the same community.
  */
 export function generateProceduralPreset(subredditName: string): TwinPreset {
-  const normalized = subredditName.toLowerCase().replace(/^r\//, "");
+  const normalized = subredditName.toLowerCase().trim().replace(/^r\//, "");
   const seed = generateSeed(normalized);
   const getVal = (offset: number, min = 10, max = 90) => 
     Math.round(min + pseudoRandom(seed + offset) * (max - min));
 
   // Keyword bias detection
-  const isPolitics = /politics|news|election|world|court/.test(normalized);
-  const isMeme = /meme|funny|humor|joke|wholesome/.test(normalized);
-  const isGaming = /gaming|game|play|ps5|xbox|pc|nintendo/.test(normalized);
-  const isSupport = /support|help|advice|ask|mental/.test(normalized);
-  const isChaotic = /wallstreet|chaos|riot|fight/.test(normalized);
+  const isPolitics = /politics|news|election|world|court|gov|law|debate/.test(normalized);
+  const isMeme = /meme|funny|humor|joke|wholesome|shitpost|pic|art/.test(normalized);
+  const isGaming = /gaming|game|play|ps5|xbox|pc|nintendo|steam|rpg|mmo/.test(normalized);
+  const isSupport = /support|help|advice|ask|mental|health|learn|teach/.test(normalized);
+  const isChaotic = /wallstreet|chaos|riot|fight|drama|leak|crypto|stock/.test(normalized);
 
   const signals: CommunitySignal = {
     sentiment: isSupport ? getVal(1, 60, 95) : (isPolitics ? getVal(1, 20, 50) : getVal(1, 30, 80)),
@@ -157,12 +157,14 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
   const activeUsers = getVal(19, 5000, 100000);
 
   const topicLabels = isPolitics 
-    ? ["Election debate", "Policy shift", "Candidate controversy", "Geopolitical tension"]
+    ? ["Policy debate", "Global headlines", "Legislative pulse", "Voter engagement"]
     : isMeme 
-    ? ["Template trend", "Viral OC", "Repost surge", "Community meta"]
+    ? ["Trending format", "Visual metadata", "Viral ripple", "Remix velocity"]
     : isGaming
-    ? ["Patch notes", "Metagame shift", "E-sports bracket", "Console launch"]
-    : ["Recent trends", "Top discussions", "New engagement", "Community focus"];
+    ? ["Balance updates", "Strategy meta", "Release window", "Guild coordination"]
+    : isSupport
+    ? ["Case triage", "Peer response", "Resource mapping", "Expert signal"]
+    : ["Trending threads", "User engagement", "Activity burst", "Community focus"];
 
   const topics: TopicCluster[] = topicLabels.map((label, i) => ({
     label,
@@ -170,26 +172,26 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
     volatility: getVal(24 + i, 30, 90),
     polarity: getVal(28 + i, 10, 90),
     density: getVal(32 + i, 20, 80),
-    category: CATEGORIES[getVal(36 + i, 0, CATEGORIES.length - 1)] as any
+    category: CATEGORIES[getVal(36 + i, 0, CATEGORIES.length - 1)]
   }));
 
   const workflows: ModeratorWorkflow[] = [
-    { id: "queue", label: "Queue triage", status: signals.reports > 70 ? "stressed" : "healthy", queueDepth: getVal(40, 10, 300), etaMinutes: getVal(41, 2, 40), owner: "u/mod-one" },
-    { id: "appeals", label: "Modmail review", status: "watch", queueDepth: getVal(42, 5, 100), etaMinutes: getVal(43, 10, 60), owner: "u/mod-two" }
+    { id: "queue", label: "Signal Triage", status: signals.reports > 70 ? "stressed" : "healthy", queueDepth: getVal(40, 10, 300), etaMinutes: getVal(41, 2, 40), owner: "u/sys-admin" },
+    { id: "appeals", label: "Meta Response", status: "watch", queueDepth: getVal(42, 5, 100), etaMinutes: getVal(43, 10, 60), owner: "u/sys-mod" }
   ];
 
   const storySteps: StoryStep[] = [
     {
       id: "proc-1",
-      title: "Community heartbeat analysis",
-      body: `Pulse has detected a ${signals.topicVolatility > 60 ? "highly volatile" : "stable"} pattern in r/${normalized}. ${isPolitics ? "Political friction is driving the current cycle." : "Standard engagement loops are holding steady."}`,
+      title: "Model Initialization",
+      body: `Pulse has ingested active signals for r/${normalized}. The community exhibits a ${signals.topicVolatility > 60 ? "high-volatility" : "stable engagement"} pattern. ${isPolitics ? "Political friction vectors are active." : "Standard behavioral loops are nominal."}`,
       actionPreset: {},
       focus: "executive"
     },
     {
       id: "proc-2",
-      title: "Emerging propagation check",
-      body: `Signals suggest conflict is ${signals.crossThreadPropagation > 50 ? "rapidly spreading" : "contained"} across primary threads. Pulse recommends proactive monitoring.`,
+      title: "Propagation Vectors",
+      body: `Heuristics suggest tension is ${signals.crossThreadPropagation > 50 ? "diffusing" : "contained"} across primary clusters. Analysis recommends ${signals.commentAcceleration > 60 ? "intervention friction" : "standard monitoring"}.`,
       actionPreset: { slowMode: signals.commentAcceleration > 70 },
       focus: "cascade"
     }
@@ -197,7 +199,7 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
 
   return {
     subreddit: `r/${normalized}`,
-    tagline: isPolitics ? "News-cycle combustion chamber" : (isMeme ? "Fast-moving entertainment cluster" : "Dynamic conversational hub"),
+    tagline: isPolitics ? "News-cycle combustion chamber" : (isMeme ? "Entertainment meta-cluster" : (isSupport ? "Peer-to-peer response hub" : "Dynamic community node")),
     population,
     activeUsers,
     sentimentBias: isPolitics ? "combative" : (isSupport ? "empathetic" : "reactive"),
@@ -207,14 +209,14 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
     liveEvents: [
       {
         id: "ev-1",
-        type: "comment_report",
-        title: "Sudden activity burst",
-        detail: "Pattern matching suggests a potential surge in manual removals.",
+        type: "mod_action",
+        title: "Heuristic Drift Detected",
+        detail: "Pattern matching suggests a potential shift in interaction quality.",
         severity: "medium",
         actor: "Pulse Observer",
-        threadLabel: "Active thread",
+        threadLabel: "Active cluster",
         weight: 12,
-        tags: ["reports", "velocity"],
+        tags: ["signals", "drift"],
         delta: { reports: 5, commentAcceleration: 4 }
       }
     ],

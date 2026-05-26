@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert, BarChart3, AlertTriangle, Activity, PlayCircle } from "lucide-react";
+import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert, BarChart3, AlertTriangle, Activity, PlayCircle, RefreshCw, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
@@ -210,8 +210,41 @@ export function PulseDashboard() {
               </div>
           </div>
 
-          <div className="flex items-center gap-10 ml-12">
-            <div className="flex flex-col items-end gap-1.5 px-4">
+          <div className="flex items-center gap-4 ml-auto">
+            {/* Quick Command Center */}
+            <div className="hidden xl:flex items-center gap-2 bg-muted/10 p-1 rounded-2xl border border-border/40 mr-6">
+              <button
+                onClick={() => setMode(mode === "live" ? "simulated" : "live")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  mode === "live" 
+                    ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
+                    : "text-muted-foreground/60 hover:text-foreground"
+                }`}
+              >
+                <div className={`h-1.5 w-1.5 rounded-full ${mode === "live" ? "bg-white animate-pulse" : "bg-zinc-600"}`} />
+                Live Node
+              </button>
+              <button
+                onClick={() => setExperienceMode(experienceMode === "story" ? "operator" : "story")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  experienceMode === "story" 
+                    ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.3)]" 
+                    : "text-muted-foreground/60 hover:text-foreground"
+                }`}
+              >
+                <PlayCircle className="h-3 w-3" />
+                Guided
+              </button>
+              <button
+                onClick={resetScenario}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
+              >
+                <Zap className="h-3 w-3" />
+                Halt
+              </button>
+            </div>
+
+            <div className="flex flex-col items-end gap-1.5 px-4 border-r border-border/40 mr-2">
               <div className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 leading-none">Target</div>
               <select
                 value={subreddit}
@@ -226,9 +259,16 @@ export function PulseDashboard() {
               </select>
             </div>
 
-            <div className="h-12 w-[1px] bg-border/40" />
+            <div className="h-10 w-[1px] bg-border/40" />
 
-            <div className="hidden lg:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 bg-muted/10 px-8 py-3 rounded-2xl border border-border/40">
+            <button 
+              onClick={() => window.location.reload()}
+              className="p-3 rounded-xl bg-muted/20 border border-border/40 text-muted-foreground/60 hover:text-primary hover:border-primary/40 transition-all active:rotate-180 duration-500"
+            >
+               <RefreshCw className="h-4 w-4" />
+            </button>
+
+            <div className="hidden lg:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 bg-muted/10 px-8 py-3 rounded-2xl border border-border/40 shadow-sm">
               <div className="flex items-center gap-3 border-r border-border/40 pr-8">
                 <Cpu className="h-3.5 w-3.5 text-primary opacity-40" />
                 <span className="font-mono">12ms</span>
@@ -319,17 +359,6 @@ export function PulseDashboard() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function ShortcutItem({ label, action }: { label: string; action: string }) {
-  return (
-    <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/10 border border-border/30 text-[10px] font-black uppercase tracking-wider transition-colors hover:border-primary/30 group">
-      <span className="text-muted-foreground/60 group-hover:text-foreground">{action}</span>
-      <kbd className="px-2 py-1 rounded border border-border/60 bg-muted/40 text-foreground/80 font-mono ml-3 shadow-inner">
-        {label}
-      </kbd>
     </div>
   );
 }

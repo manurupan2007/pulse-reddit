@@ -75,7 +75,7 @@ export type TopicCluster = {
   volatility: number;
   polarity: number;
   density: number;
-  category: "politics" | "meme" | "support" | "news" | "gaming" | "meta";
+  category: "politics" | "meme" | "support" | "news" | "gaming" | "meta" | "tech" | "culture";
 };
 
 export type Alert = {
