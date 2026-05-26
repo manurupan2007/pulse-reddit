@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, BrainCircuit, Keyboard, Radar, RadioTower, Sparkles, Zap } from "lucide-react";
+import { AlertTriangle, BrainCircuit, Keyboard, Radar, RadioTower, Sparkles, Zap, ChevronRight, Activity, ShieldAlert } from "lucide-react";
 
 import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { AlertStack } from "@/components/alert-stack";
@@ -49,31 +49,31 @@ export function PulseDashboard() {
 
   const primaryMetrics = [
     {
-      label: "Community Stability",
+      label: "Stability",
       value: twin.scores.stability,
       tone: "accent" as const,
       detail: "Composite resilience under current pressure."
     },
     {
-      label: "Conflict Pressure",
+      label: "Conflict",
       value: twin.scores.conflictPressure,
       tone: "danger" as const,
       detail: "Escalation potential across active threads."
     },
     {
-      label: "Moderator Load",
+      label: "Mod Load",
       value: twin.scores.moderatorLoad,
       tone: "amber" as const,
       detail: "Projected intervention demand this cycle."
     },
     {
-      label: "Community Pressure",
+      label: "Pressure",
       value: twin.scores.communityPressure,
       tone: "cyan" as const,
-      detail: "Rolling pressure from reports, velocity, and spillover."
+      detail: "Rolling pressure from reports and velocity."
     },
     {
-      label: "Discussion Quality",
+      label: "Quality",
       value: twin.scores.discussionQuality,
       tone: "lime" as const,
       detail: "Depth, civility, and signal retention."
@@ -81,373 +81,310 @@ export function PulseDashboard() {
   ];
 
   return (
-    <main className="relative overflow-hidden px-4 py-4 md:px-6 md:py-6" data-sound-cue={soundCue ?? "ambient"}>
-      <div className="mx-auto flex w-full max-w-[1560px] flex-col gap-5">
-        <section className="glass-panel rounded-shell relative overflow-hidden px-6 py-6 shadow-pulse md:px-8 md:py-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(55,244,255,0.14),transparent_22%),radial-gradient(circle_at_25%_15%,rgba(199,103,255,0.16),transparent_32%)]" />
-          <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_50%_0,rgba(55,244,255,0.13),transparent_40%)]" />
-          {loading ? (
-            <div className="pointer-events-none absolute inset-0 animate-pulse bg-white/[0.03]" />
-          ) : null}
-          <div className="relative z-10 flex flex-col gap-8">
-            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-              <div className="space-y-5">
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    <div className="grid h-8 w-8 place-items-center rounded-full bg-accent/20 text-accent">
-                      <Radar className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="font-display text-lg text-white">Pulse</div>
-                      <div className="text-xs uppercase tracking-[0.28em] text-muted">
-                        Moderation Operating System
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setMode(mode === "simulated" ? "live" : "simulated")}
-                    className="rounded-full border border-accent/15 bg-accent/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-accent transition-transform duration-300 hover:-translate-y-0.5"
-                  >
-                    {mode === "live" ? "Live subreddit mode" : "Simulated mode"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setExperienceMode(experienceMode === "operator" ? "story" : "operator")}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-[0.28em] text-muted transition-transform duration-300 hover:-translate-y-0.5"
-                  >
-                    {experienceMode === "story" ? "Storytelling mode" : "Operator mode"}
-                  </button>
-                </div>
-
-                <div className="max-w-3xl space-y-4">
-                  <h1 className="font-display text-balance text-4xl leading-tight text-white md:text-6xl">
-                    Forecast subreddit behavior before moderators touch the controls.
-                  </h1>
-                  <p className="max-w-2xl text-base leading-7 text-[#bfd3f3] md:text-lg">
-                    Pulse is a Devvit-powered moderation intelligence layer: a digital twin that
-                    ingests live-ish Reddit signals, simulates intervention outcomes, and makes
-                    conflict dynamics feel visible before they become operationally expensive.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    {twin.sourceLabel}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    {twin.clockLabel}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    Transport: {transport}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2">
-                    Future of moderation command center
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid gap-4 xl:w-[430px]">
-                <div className="glass-panel rounded-tile p-4">
-                  <div className="mb-3 flex items-center justify-between">
-                    <div className="text-xs uppercase tracking-[0.28em] text-muted">
-                      Deployment surface
-                    </div>
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-accent">
-                      <RadioTower className="h-3 w-3" />
-                      {twin.devvit.lastSync}
-                    </div>
-                  </div>
-
-                  <div className="mt-3 grid gap-3">
-                    <select
-                      value={subreddit}
-                      onChange={(event) => setSubreddit(event.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-[#07101f] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-accent/40"
-                    >
-                      {presetOptions.map((option) => (
-                        <option key={option.subreddit} value={option.subreddit}>
-                          {option.subreddit} - {option.tagline}
-                        </option>
-                      ))}
-                    </select>
-
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <button
-                        type="button"
-                        onClick={() => setMode("simulated")}
-                        className={`rounded-2xl border px-4 py-3 text-left text-sm transition-transform duration-300 hover:-translate-y-0.5 ${
-                          mode === "simulated"
-                            ? "border-accent/30 bg-accent/10 text-white"
-                            : "border-white/10 bg-white/[0.03] text-muted"
-                        }`}
-                      >
-                        Simulated twin
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setMode("live")}
-                        className={`rounded-2xl border px-4 py-3 text-left text-sm transition-transform duration-300 hover:-translate-y-0.5 ${
-                          mode === "live"
-                            ? "border-accent/30 bg-accent/10 text-white"
-                            : "border-white/10 bg-white/[0.03] text-muted"
-                        }`}
-                      >
-                        Live subreddit mode
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
-                  <HealthPulse twin={twin} />
-
-                  <div className="glass-panel rounded-tile p-4">
-                    <div className="mb-3 flex items-center justify-between">
-                      <div className="text-xs uppercase tracking-[0.28em] text-muted">
-                        Guided controls
-                      </div>
-                      <Keyboard className="h-4 w-4 text-magenta" />
-                    </div>
-                    <div className="grid gap-2 text-sm text-muted">
-                      <Shortcut label="D" detail="toggle storytelling mode" />
-                      <Shortcut label="L" detail="switch live/simulated adapter" />
-                      <Shortcut label="Space" detail="autoplay demo walkthrough" />
-                      <Shortcut label="R" detail="reset active scenario" />
-                    </div>
-                  </div>
-                </div>
-
-                {error ? (
-                  <div className="rounded-2xl border border-danger/30 bg-danger/10 p-4 text-sm text-[#ffd7df]">
-                    {error}
-                  </div>
-                ) : null}
-              </div>
+    <main className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      {/* Header / Hero Section */}
+      <div className="border-b border-border bg-card/30 backdrop-blur-md sticky top-0 z-50">
+        <div className="mx-auto max-w-[1560px] px-4 py-3 md:px-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+              <Radar className="h-5 w-5" />
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-              {primaryMetrics.map((metric) => (
-                <MetricOrb key={metric.label} {...metric} />
-              ))}
+            <div>
+              <div className="text-base font-bold tracking-tight">Pulse</div>
+              <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+                Moderation Intelligence
+              </div>
             </div>
           </div>
-        </section>
 
-        <SectionCard
-          eyebrow="Executive Moderation View"
-          title="Command center"
-          description="A high-level operator layer for subreddit health, moderator fatigue, intervention effectiveness, and today's most urgent risks."
-          rightSlot={
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-              <Zap className="h-4 w-4 text-accent" />
-              Live command layer
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary border border-border text-xs font-medium text-muted-foreground">
+              <span className="relative flex h-2 w-2">
+                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${mode === 'live' ? 'animate-ping bg-emerald-500' : 'bg-zinc-500'}`}></span>
+                <span className={`relative inline-flex h-2 w-2 rounded-full ${mode === 'live' ? 'bg-emerald-500' : 'bg-zinc-500'}`}></span>
+              </span>
+              {mode === "live" ? "Live Stream" : "Simulation"}
             </div>
-          }
-        >
-          <ExecutiveOverview metrics={twin.executiveMetrics} risks={twin.todayRisks} />
-        </SectionCard>
+            <select
+              value={subreddit}
+              onChange={(e) => setSubreddit(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              {presetOptions.map((option) => (
+                <option key={option.subreddit} value={option.subreddit}>
+                  {option.subreddit}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <SectionCard
-          eyebrow="Devvit Integration Layer"
-          title="Install flow, permissions, and event ingestion"
-          description="Pulse is positioned as a subreddit-native decision support system, not a generic analytics dashboard. This layer shows how the app installs, syncs, and maintains rolling pressure state."
-          rightSlot={
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-              <BrainCircuit className="h-4 w-4 text-cyan" />
-              Deployable architecture
+      <div className="mx-auto max-w-[1560px] px-4 py-8 md:px-6 flex flex-col gap-8">
+        {/* Main Overview Grid */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="space-y-4">
+              <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-balance">
+                Operational forecast for subreddit communities.
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
+                Pulse models community behavior by ingesting live signals and simulating intervention outcomes. 
+                Identify emerging conflict dynamics before they impact your moderation capacity.
+              </p>
             </div>
-          }
-        >
-          <DevvitOpsPanel devvit={twin.devvit} workflows={twin.workflows} events={twin.events} />
-        </SectionCard>
 
-        <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
-          <SectionCard
-            eyebrow="Timeline Forecast"
-            title="Future projection engine"
-            description="Pulse projects likely swings in toxicity, engagement, moderator pressure, quality, and retention across the next 72 hours."
-            rightSlot={
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-                <RadioTower className="h-4 w-4 text-accent" />
-                Forecast simulation active
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="glass-panel p-5 flex flex-col justify-between h-32">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Source</span>
+                  <Activity className="h-4 w-4" />
+                </div>
+                <div className="text-sm font-medium mt-auto">{twin.sourceLabel}</div>
               </div>
-            }
-          >
-            <ForecastTimeline forecast={twin.forecast} />
-          </SectionCard>
+              <div className="glass-panel p-5 flex flex-col justify-between h-32">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Sync Status</span>
+                  <RadioTower className="h-4 w-4" />
+                </div>
+                <div className="text-sm font-medium mt-auto">{twin.devvit.lastSync}</div>
+              </div>
+              <div className="glass-panel p-5 flex flex-col justify-between h-32">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span className="text-xs font-semibold uppercase tracking-wider">Active Users</span>
+                  <Sparkles className="h-4 w-4 text-amber-500" />
+                </div>
+                <div className="text-2xl font-bold mt-auto">{twin.activeUsers.toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
 
-          <SectionCard
-            eyebrow="Community DNA"
-            title="Personality classifier"
-            description="A simulated behavioral fingerprint derived from discussion depth, volatility, humor load, cohesion, and moderator friction."
-            rightSlot={
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-                <Sparkles className="h-4 w-4 text-magenta" />
-                {twin.personality.type}
-              </div>
-            }
-          >
-            <CommunityDna personality={twin.personality} />
-          </SectionCard>
+          <div className="flex flex-col gap-4">
+             <HealthCard twin={twin} />
+             <div className="glass-panel p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Shortcuts</span>
+                  <Keyboard className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <ShortcutItem label="D" action="Toggle Story" />
+                  <ShortcutItem label="L" action="Toggle Live" />
+                  <ShortcutItem label="Space" action="Autoplay" />
+                  <ShortcutItem label="R" action="Reset" />
+                </div>
+             </div>
+          </div>
         </div>
 
-        <SectionCard
-          eyebrow="Community Pressure"
-          title="Rolling pressure radar"
-          description="A live field view of community pressure, volatility, and intervention load. This is the operating heartbeat behind Pulse's forecast and alert layers."
-          rightSlot={
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-              <RadioTower className="h-4 w-4 text-cyan" />
-              Stream-aware pressure model
-            </div>
-          }
-        >
-          <PressureRadar history={twin.pressureHistory} />
-        </SectionCard>
+        {/* Primary Scores */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {primaryMetrics.map((metric) => (
+            <MetricOrb key={metric.label} {...metric} />
+          ))}
+        </div>
 
-        <div className="grid gap-5 xl:grid-cols-[1.08fr_0.92fr]">
+        {/* Dashboard Sections */}
+        <div className="grid gap-6">
           <SectionCard
-            eyebrow="Scenario Simulator"
-            title="Moderation action lab"
-            description="Simulate intervention packages and generate believable narratives, confidence indicators, and before-versus-after shifts before taking action."
+            title="Executive Overview"
+            description="High-level health metrics and urgent operational risks."
+          >
+            <ExecutiveOverview metrics={twin.executiveMetrics} risks={twin.todayRisks} />
+          </SectionCard>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <SectionCard
+              title="Forecast Timeline"
+              description="Projected community trajectory over the next 72 hours."
+            >
+              <ForecastTimeline forecast={twin.forecast} />
+            </SectionCard>
+
+            <SectionCard
+              title="Community DNA"
+              description="Behavioral fingerprinting based on interaction patterns."
+            >
+              <CommunityDna personality={twin.personality} />
+            </SectionCard>
+          </div>
+
+          <SectionCard
+            title="Pressure Radar"
+            description="Real-time monitoring of community volatility and stress points."
+          >
+            <PressureRadar history={twin.pressureHistory} />
+          </SectionCard>
+
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <SectionCard
+              title="Scenario Simulator"
+              description="Test moderation actions and forecast their community impact."
+              rightSlot={
+                <button
+                  onClick={resetScenario}
+                  className="inline-flex items-center justify-center rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                >
+                  Reset
+                </button>
+              }
+            >
+              <SimulatorPanel
+                actions={actions}
+                state={runtime.scenario}
+                onToggle={toggleAction}
+                outcome={outcome}
+              />
+            </SectionCard>
+
+            <SectionCard
+              title="Conflict Cascade"
+              description="Visualization of how tension propagates across threads."
+            >
+              <CascadeView outcome={outcome} />
+            </SectionCard>
+          </div>
+
+          <SectionCard
+            title="Devvit Operations"
+            description="Native integration layer for event ingestion and install flow."
+          >
+            <DevvitOpsPanel devvit={twin.devvit} workflows={twin.workflows} events={twin.events} />
+          </SectionCard>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <SectionCard
+              title="Activity Heatmap"
+              description="Temporal activity patterns for staffing optimization."
+            >
+              <ActivityHeatmap heatmap={twin.heatmap} />
+            </SectionCard>
+
+            <SectionCard
+              title="Live Event Feed"
+              description="Chronological stream of moderation triggers and incidents."
+            >
+              <EventFeed events={twin.events} />
+            </SectionCard>
+          </div>
+
+          <SectionCard
+            title="Alert Stream"
+            description="Proactive warning system for emerging community risks."
+          >
+            <AlertStack alerts={twin.alerts} />
+          </SectionCard>
+
+          <SectionCard
+            title="Storytelling Mode"
+            description="Guided walkthrough for demonstration and incident review."
             rightSlot={
               <button
-                type="button"
-                onClick={resetScenario}
-                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted transition-transform duration-300 hover:-translate-y-0.5"
+                onClick={() => setAutoplay(!autoplay)}
+                className={`inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors h-8 px-3 ${autoplay ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border border-input bg-background hover:bg-accent'}`}
               >
-                Reset scenario
+                {autoplay ? "Stop Autoplay" : "Start Autoplay"}
               </button>
             }
           >
-            <SimulatorPanel
-              actions={actions}
-              state={runtime.scenario}
-              onToggle={toggleAction}
-              outcome={outcome}
+            <StoryModePanel
+              steps={twin.storySteps}
+              storyIndex={storyIndex}
+              experienceMode={experienceMode}
+              autoplay={autoplay}
+              onJump={jumpToStory}
+              onToggleAutoplay={setAutoplay}
+              onSetMode={setExperienceMode}
             />
           </SectionCard>
-
-          <SectionCard
-            eyebrow="Cascade View"
-            title="How conflict spreads"
-            description="This is Pulse's signature feature: thread-to-thread escalation, sentiment contamination, meme amplification, and moderation containment visualized as a live propagation system."
-            rightSlot={
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted">
-                <AlertTriangle className="h-4 w-4 text-danger" />
-                Spread model active
-              </div>
-            }
-          >
-            <CascadeView outcome={outcome} />
-          </SectionCard>
         </div>
-
-        <SectionCard
-          eyebrow="Storytelling Mode"
-          title="Cinematic demo walkthrough"
-          description="Pulse can shift from operator tooling into a guided cinematic demo flow with staged alerts, before-versus-after action presets, and auto-playing risk escalation."
-          rightSlot={
-            <button
-              type="button"
-              onClick={() => setAutoplay(!autoplay)}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted transition-transform duration-300 hover:-translate-y-0.5"
-            >
-              {autoplay ? "Pause autoplay" : "Start autoplay"}
-            </button>
-          }
-        >
-          <StoryModePanel
-            steps={twin.storySteps}
-            storyIndex={storyIndex}
-            experienceMode={experienceMode}
-            autoplay={autoplay}
-            onJump={jumpToStory}
-            onToggleAutoplay={setAutoplay}
-            onSetMode={setExperienceMode}
-          />
-        </SectionCard>
-
-        <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-          <SectionCard
-            eyebrow="Community Heat"
-            title="Engagement heatmap"
-            description="A quick-read activity field for deciding when moderation staffing, automod strictness, and intervention windows should shift."
-          >
-            <ActivityHeatmap heatmap={twin.heatmap} />
-          </SectionCard>
-
-          <SectionCard
-            eyebrow="Live Event Feed"
-            title="Operational activity stream"
-            description="Reports, automod catches, mod actions, and thread-level incidents flowing into Pulse's rolling pressure model."
-          >
-            <EventFeed events={twin.events} />
-          </SectionCard>
-        </div>
-
-        <SectionCard
-          eyebrow="Alert Stream"
-          title="Moderator warning system"
-          description="Pulse continuously translates score movement into concise operator-grade alerts for escalation, saturation, and attention shifts."
-        >
-          <AlertStack alerts={twin.alerts} />
-        </SectionCard>
       </div>
+      
+      {/* Footer / Status Bar */}
+      <footer className="border-t border-border bg-card/30 py-4 mt-8">
+        <div className="mx-auto max-w-[1560px] px-4 md:px-6 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <span>© 2026 Pulse Moderation OS</span>
+            <span>Version {twin.devvit.appVersion}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+              System Operational
+            </div>
+            <span>Transport: {transport}</span>
+          </div>
+        </div>
+      </footer>
+
+      {error && (
+        <div className="fixed bottom-6 right-6 z-[100] max-w-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="rounded-lg border border-danger/50 bg-danger/10 p-4 shadow-xl backdrop-blur-md">
+            <div className="flex items-start gap-3">
+              <ShieldAlert className="h-5 w-5 text-danger shrink-0" />
+              <div>
+                <h3 className="text-sm font-bold text-danger">Runtime Error</h3>
+                <p className="mt-1 text-xs text-danger/90 leading-relaxed">{error}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
 
-function Shortcut({ label, detail }: { label: string; detail: string }) {
+function ShortcutItem({ label, action }: { label: string; action: string }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2">
-      <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-accent">
+    <div className="flex items-center justify-between px-2 py-1.5 rounded bg-muted/30 border border-border/50 text-[10px] font-medium uppercase tracking-tight">
+      <span className="text-muted-foreground">{action}</span>
+      <kbd className="px-1.5 py-0.5 rounded border border-border bg-background text-foreground ml-2">
         {label}
-      </span>
-      <span>{detail}</span>
+      </kbd>
     </div>
   );
 }
 
-function HealthPulse({ twin }: { twin: typeof fallbackPayload.twin }) {
+function HealthCard({ twin }: { twin: any }) {
   return (
-    <div className="glass-panel rounded-tile grid gap-4 p-4">
-      <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-[0.28em] text-muted">Health pulse</div>
-        <div className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-accent">
-          {twin.activeUsers.toLocaleString()} active now
+    <div className="glass-panel p-5 overflow-hidden relative">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Community Health</span>
+        <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase tracking-tight border border-emerald-500/20">
+          Optimal
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-[132px_1fr] md:items-center">
-        <div
-          className="metric-ring animate-pulse-glow grid h-32 w-32 place-items-center rounded-full border border-white/10"
-          style={{
-            background: `radial-gradient(circle at center, rgba(255,255,255,0.18), transparent 58%), conic-gradient(from 200deg, rgba(255,255,255,0.08), rgba(55,244,255,0.94) ${twin.scores.healthIndex}%, rgba(255,255,255,0.08) 0)`
-          }}
-        >
-          <div className="grid h-24 w-24 place-items-center rounded-full bg-[#07111e]/94 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
-            <div className="text-center">
-              <div className="font-display text-3xl text-white">{twin.scores.healthIndex}</div>
-              <div className="text-[10px] uppercase tracking-[0.28em] text-muted">Health</div>
-            </div>
+      <div className="flex items-center gap-6">
+        <div className="relative h-20 w-20 shrink-0">
+          <svg className="h-full w-full" viewBox="0 0 100 100">
+            <circle
+              className="stroke-muted/10"
+              strokeWidth="10"
+              fill="transparent"
+              r="40"
+              cx="50"
+              cy="50"
+            />
+            <circle
+              className="stroke-primary transition-all duration-500"
+              strokeWidth="10"
+              strokeDasharray={251.2}
+              strokeDashoffset={251.2 - (251.2 * twin.scores.healthIndex) / 100}
+              strokeLinecap="round"
+              fill="transparent"
+              r="40"
+              cx="50"
+              cy="50"
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center font-bold text-xl">
+            {twin.scores.healthIndex}
           </div>
         </div>
-        <div>
-          <div className="font-display text-xl text-white">{twin.subreddit}</div>
-          <div className="mt-2 text-sm leading-6 text-muted">{twin.tagline}</div>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-              <div className="text-xs uppercase tracking-[0.24em] text-muted">Mode</div>
-              <div className="mt-2 text-white">{twin.mode === "live" ? "Live sync" : "Simulation"}</div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-              <div className="text-xs uppercase tracking-[0.24em] text-muted">Twin status</div>
-              <div className="mt-2 text-white">Synchronized</div>
-            </div>
-          </div>
+        <div className="min-w-0">
+          <h3 className="text-lg font-bold truncate">{twin.subreddit}</h3>
+          <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
+            {twin.tagline}
+          </p>
         </div>
       </div>
     </div>

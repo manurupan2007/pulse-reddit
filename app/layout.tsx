@@ -1,15 +1,17 @@
-import "@fontsource/orbitron/700.css";
-import "@fontsource/space-grotesk/400.css";
-import "@fontsource/space-grotesk/500.css";
-import "@fontsource/space-grotesk/700.css";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 import type { Metadata } from "next";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
 export const metadata: Metadata = {
-  title: "Pulse | Reddit Moderation OS",
+  title: "Pulse | Moderation Intelligence",
   description:
-    "Pulse is a futuristic subreddit simulation and forecasting dashboard for moderators, built for hackathon demos with heuristic intelligence."
+    "Pulse is an operational moderation forecast engine for Reddit communities, providing live pressure modeling and intervention simulation."
 };
 
 export default function RootLayout({
@@ -18,8 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
+      <body className={`${inter.variable} font-sans`}>
+        {children}
+      </body>
     </html>
   );
 }

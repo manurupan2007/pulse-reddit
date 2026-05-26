@@ -10,48 +10,79 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        panel: "var(--panel)",
-        "panel-strong": "var(--panel-strong)",
-        line: "var(--line)",
-        text: "var(--text)",
-        muted: "var(--muted)",
-        accent: "var(--accent)",
-        cyan: "var(--cyan)",
-        magenta: "var(--magenta)",
-        lime: "var(--lime)",
-        amber: "var(--amber)",
-        danger: "var(--danger)"
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        panel: "hsl(var(--panel))",
+        "panel-strong": "hsl(var(--panel-strong))",
+        line: "hsl(var(--line))",
+        cyan: "#0ea5e9",
+        magenta: "#d946ef",
+        lime: "#84cc16",
+        amber: "#f59e0b",
+        danger: "#ef4444"
       },
       boxShadow: {
-        pulse: "0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.38), 0 0 60px rgba(55,244,255,0.12)"
+        sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        DEFAULT: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
       },
       borderRadius: {
-        shell: "30px",
-        tile: "24px"
-      },
-      backgroundImage: {
-        "grid-fade":
-          "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)"
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+        tile: "12px",
+        shell: "16px"
       },
       fontFamily: {
-        display: ["Orbitron", "Segoe UI", "sans-serif"],
-        body: ["Space Grotesk", "Segoe UI", "sans-serif"]
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        display: ["var(--font-sans)", "ui-sans-serif", "system-ui"]
       },
       keyframes: {
-        sweep: {
-          "0%": { transform: "translateX(-20%)", opacity: "0.35" },
-          "50%": { opacity: "0.9" },
-          "100%": { transform: "translateX(120%)", opacity: "0.2" }
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
-        pulseGlow: {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(55,244,255,0.12)" },
-          "50%": { boxShadow: "0 0 35px 8px rgba(55,244,255,0.22)" }
-        }
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
       animation: {
-        sweep: "sweep 3.2s linear infinite",
-        "pulse-glow": "pulseGlow 2.8s ease-in-out infinite"
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       }
     }
   },

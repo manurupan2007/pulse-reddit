@@ -19,104 +19,100 @@ export function SimulatorPanel({
 }: SimulatorPanelProps) {
   const stats = [
     {
-      label: "Engagement change",
+      label: "Engagement",
       value: `${outcome.engagementChange > 0 ? "+" : ""}${outcome.engagementChange}%`,
-      tone: outcome.engagementChange >= 0 ? "text-accent" : "text-amber"
+      tone: outcome.engagementChange >= 0 ? "text-emerald-500" : "text-amber-500"
     },
     {
-      label: "Toxicity reduction",
+      label: "Toxicity Reduction",
       value: `-${outcome.toxicityReduction}%`,
-      tone: "text-lime"
+      tone: "text-red-500"
     },
     {
-      label: "Backlash probability",
+      label: "Backlash Prob.",
       value: `${outcome.backlashProbability}%`,
-      tone: outcome.backlashProbability > 45 ? "text-danger" : "text-cyan"
+      tone: outcome.backlashProbability > 45 ? "text-red-500" : "text-emerald-500"
     },
     {
-      label: "Moderator load",
+      label: "Workload Shift",
       value: `${outcome.moderatorLoadChange > 0 ? "+" : ""}${outcome.moderatorLoadChange}%`,
-      tone: outcome.moderatorLoadChange <= 0 ? "text-accent" : "text-danger"
+      tone: outcome.moderatorLoadChange <= 0 ? "text-emerald-500" : "text-red-500"
     },
     {
-      label: "Sentiment trajectory",
-      value: `${outcome.sentimentTrajectory > 0 ? "+" : ""}${outcome.sentimentTrajectory}%`,
-      tone: outcome.sentimentTrajectory >= 0 ? "text-lime" : "text-danger"
-    },
-    {
-      label: "Retention impact",
+      label: "Retention",
       value: `${outcome.retentionImpact > 0 ? "+" : ""}${outcome.retentionImpact}%`,
-      tone: outcome.retentionImpact >= 0 ? "text-accent" : "text-amber"
+      tone: outcome.retentionImpact >= 0 ? "text-emerald-500" : "text-amber-500"
     },
     {
-      label: "Quality forecast",
+      label: "Quality Score",
       value: `${outcome.discussionQualityForecast}`,
-      tone: "text-lime"
+      tone: "text-emerald-500"
     }
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="grid gap-3">
+    <div className="space-y-6">
+      <div className="grid gap-3 sm:grid-cols-2">
         {actions.map((action) => (
           <label
             key={action.key}
-            className="glass-panel rounded-2xl flex cursor-pointer items-start justify-between gap-4 p-4 transition-transform duration-300 hover:-translate-y-0.5"
+            className="flex cursor-pointer items-start justify-between gap-4 p-4 rounded-xl border border-border bg-card/40 transition-colors hover:bg-card/60"
           >
-            <div>
-              <div className="text-sm font-semibold text-white">{action.label}</div>
-              <div className="mt-1 text-sm leading-6 text-muted">{action.description}</div>
+            <div className="space-y-1">
+              <div className="text-sm font-bold tracking-tight">{action.label}</div>
+              <div className="text-xs text-muted-foreground leading-relaxed">{action.description}</div>
             </div>
             <Switch checked={state[action.key]} onCheckedChange={() => onToggle(action.key)} />
           </label>
         ))}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <div className="text-xs uppercase tracking-[0.26em] text-muted">{stat.label}</div>
-            <div className={`mt-3 font-display text-2xl ${stat.tone}`}>{stat.value}</div>
+          <div key={stat.label} className="rounded-lg border border-border bg-muted/10 p-3 space-y-2">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</div>
+            <div className={`text-xl font-black tabular-nums ${stat.tone}`}>{stat.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="rounded-2xl border border-accent/15 bg-accent/10 p-4 text-sm leading-7 text-[#d2eaff]">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <span>{outcome.narrative}</span>
-          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-accent">
+      <div className="rounded-xl border border-primary/10 bg-primary/5 p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground leading-relaxed flex-1 italic">
+            &quot;{outcome.narrative}&quot;
+          </p>
+          <span className="shrink-0 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
             {outcome.confidence} confidence
           </span>
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {outcome.explanation.map((line) => (
-          <div key={line} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-muted">
-            {line}
+          <div key={line} className="rounded-lg border border-border bg-muted/5 p-4 text-xs text-muted-foreground leading-relaxed flex items-center gap-3">
+             <div className="h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
+             {line}
           </div>
         ))}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {outcome.shifts.map((shift) => (
-          <div key={shift.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <div className="text-xs uppercase tracking-[0.24em] text-muted">{shift.label}</div>
-            <div className="mt-3 flex items-end justify-between gap-3">
-              <div className="font-display text-2xl text-white">{shift.after}</div>
-              <div className={shift.delta <= 0 ? "text-accent" : "text-danger"}>
+          <div key={shift.label} className="rounded-xl border border-border bg-card/40 p-4 space-y-4">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{shift.label}</div>
+            <div className="flex items-end justify-between">
+              <div className="text-2xl font-black tabular-nums tracking-tight">{shift.after}</div>
+              <div className={`text-xs font-bold tabular-nums ${shift.delta <= 0 ? "text-emerald-500" : "text-red-500"}`}>
                 {shift.delta > 0 ? "+" : ""}
                 {shift.delta}
               </div>
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/5">
+            <div className="h-1.5 overflow-hidden rounded-full bg-muted/20">
               <div
-                className={`h-full rounded-full ${
-                  shift.delta <= 0
-                    ? "bg-gradient-to-r from-accent to-cyan"
-                    : "bg-gradient-to-r from-amber to-danger"
+                className={`h-full rounded-full transition-all duration-700 ${
+                  shift.delta <= 0 ? "bg-emerald-500" : "bg-red-500"
                 }`}
-                style={{ width: `${Math.max(8, Math.min(100, shift.after))}%` }}
+                style={{ width: `${Math.max(5, Math.min(100, shift.after))}%` }}
               />
             </div>
           </div>

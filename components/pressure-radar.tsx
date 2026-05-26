@@ -7,7 +7,8 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
+  Legend
 } from "recharts";
 
 import { PressurePoint } from "@/lib/types";
@@ -21,55 +22,78 @@ export function PressureRadar({ history }: PressureRadarProps) {
   const future = history.at(-1) ?? history[0];
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 md:grid-cols-3">
-        <PressureStat label="Current pressure" value={current?.pressure ?? 0} />
-        <PressureStat label="Volatility field" value={current?.volatility ?? 0} />
-        <PressureStat label="Forward load" value={future?.interventionLoad ?? 0} />
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-3">
+        <PressureStat label="Current pressure" value={current?.pressure ?? 0} color="text-sky-500" />
+        <PressureStat label="Volatility field" value={current?.volatility ?? 0} color="text-fuchsia-500" />
+        <PressureStat label="Forward load" value={future?.interventionLoad ?? 0} color="text-amber-500" />
       </div>
-      <div className="h-[300px] rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="h-[300px] rounded-xl border border-border bg-muted/10 p-4">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={history}>
             <defs>
-              <linearGradient id="pressureField" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#37f4ff" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="#37f4ff" stopOpacity={0} />
+              <linearGradient id="pressureFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="volatilityField" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#c767ff" stopOpacity={0.24} />
-                <stop offset="100%" stopColor="#c767ff" stopOpacity={0} />
+              <linearGradient id="volatilityFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#d946ef" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#d946ef" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="label" tick={{ fill: "rgba(236,245,255,0.72)", fontSize: 12 }} />
-            <YAxis tick={{ fill: "rgba(236,245,255,0.58)", fontSize: 12 }} />
+            <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="label" 
+              tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: 600 }}
+              axisLine={{ stroke: "var(--border)" }}
+              tickLine={false}
+            />
+            <YAxis 
+              tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: 600 }}
+              axisLine={{ stroke: "var(--border)" }}
+              tickLine={false}
+            />
             <Tooltip
               contentStyle={{
-                background: "rgba(6,12,26,0.95)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 18
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: "8px",
+                fontSize: "12px",
+                fontWeight: 600
               }}
+            />
+            <Legend 
+              verticalAlign="top" 
+              align="right" 
+              height={36}
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
             />
             <Area
               type="monotone"
               dataKey="pressure"
-              stroke="#37f4ff"
+              name="Pressure"
+              stroke="#0ea5e9"
               strokeWidth={2}
-              fill="url(#pressureField)"
+              fill="url(#pressureFill)"
             />
             <Area
               type="monotone"
               dataKey="volatility"
-              stroke="#c767ff"
+              name="Volatility"
+              stroke="#d946ef"
               strokeWidth={2}
-              fill="url(#volatilityField)"
+              fill="url(#volatilityFill)"
             />
             <Area
               type="monotone"
               dataKey="interventionLoad"
-              stroke="#ffbd59"
+              name="Intervention"
+              stroke="#f59e0b"
               strokeWidth={2}
               fill="transparent"
+              strokeDasharray="5 5"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -78,11 +102,11 @@ export function PressureRadar({ history }: PressureRadarProps) {
   );
 }
 
-function PressureStat({ label, value }: { label: string; value: number }) {
+function PressureStat({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-      <div className="text-xs uppercase tracking-[0.28em] text-muted">{label}</div>
-      <div className="mt-3 font-display text-3xl text-white">{value}</div>
+    <div className="rounded-xl border border-border bg-card/40 p-5 space-y-3">
+      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className={`text-3xl font-black tabular-nums tracking-tight ${color}`}>{value}</div>
     </div>
   );
 }

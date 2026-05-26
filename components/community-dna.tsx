@@ -17,51 +17,51 @@ type CommunityDnaProps = {
 
 export function CommunityDna({ personality }: CommunityDnaProps) {
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-      <div className="h-[280px] rounded-2xl border border-white/10 bg-white/[0.02] p-2">
+    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="h-[300px] rounded-xl border border-border bg-muted/10 p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={personality.scores} outerRadius="72%">
-            <PolarGrid stroke="rgba(255,255,255,0.12)" />
+          <RadarChart data={personality.scores} outerRadius="80%">
+            <PolarGrid stroke="var(--border)" />
             <PolarAngleAxis
               dataKey="trait"
-              tick={{ fill: "rgba(236,245,255,0.76)", fontSize: 11, letterSpacing: 1 }}
+              tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: 600 }}
             />
             <Radar
               dataKey="value"
-              stroke="#37f4ff"
+              stroke="var(--primary)"
               strokeWidth={2}
-              fill="rgba(55,244,255,0.24)"
-              fillOpacity={1}
+              fill="var(--primary)"
+              fillOpacity={0.15}
             />
           </RadarChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="flex flex-col justify-between gap-4">
+      <div className="flex flex-col justify-center gap-6">
         <motion.div
-          initial={{ opacity: 0, x: 18 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="rounded-2xl border border-accent/20 bg-accent/10 p-4"
+          transition={{ duration: 0.3 }}
+          className="rounded-xl border border-border bg-card/60 p-5 space-y-3"
         >
-          <div className="text-xs uppercase tracking-[0.3em] text-accent/80">Primary Type</div>
-          <div className="mt-3 font-display text-2xl text-white">{personality.type}</div>
-          <p className="mt-3 text-sm leading-6 text-[#c6dafb]">{personality.rationale}</p>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Classification</div>
+          <div className="text-2xl font-black tracking-tight">{personality.type}</div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{personality.rationale}</p>
         </motion.div>
 
-        <div className="grid gap-3">
+        <div className="grid gap-4">
           {personality.scores.map((trait) => (
-            <div key={trait.trait}>
-              <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-muted">{trait.trait}</span>
-                <span className="font-display text-white">{trait.value}</span>
+            <div key={trait.trait} className="space-y-1.5">
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider">
+                <span className="text-muted-foreground">{trait.trait}</span>
+                <span className="tabular-nums">{trait.value}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/5">
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted/20">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${trait.value}%` }}
-                  transition={{ duration: 0.6, delay: 0.05 }}
-                  className="h-full rounded-full bg-gradient-to-r from-accent via-cyan to-magenta"
+                  transition={{ duration: 0.5 }}
+                  className="h-full rounded-full bg-primary"
                 />
               </div>
             </div>

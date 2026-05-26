@@ -1,4 +1,4 @@
-import { AlertTriangle, Gauge, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Gauge, ShieldCheck, Activity } from "lucide-react";
 
 import { Alert, ExecutiveMetric } from "@/lib/types";
 
@@ -8,66 +8,65 @@ type ExecutiveOverviewProps = {
 };
 
 const toneMap = {
-  accent: "from-accent/30 to-cyan/10 text-accent",
-  cyan: "from-cyan/30 to-accent/10 text-cyan",
-  magenta: "from-magenta/30 to-magenta/10 text-magenta",
-  lime: "from-lime/30 to-lime/10 text-lime",
-  amber: "from-amber/30 to-amber/10 text-amber",
-  danger: "from-danger/30 to-danger/10 text-danger"
+  accent: "text-sky-500 border-sky-500/20 bg-sky-500/5",
+  cyan: "text-cyan-500 border-cyan-500/20 bg-cyan-500/5",
+  magenta: "text-fuchsia-500 border-fuchsia-500/20 bg-fuchsia-500/5",
+  lime: "text-emerald-500 border-emerald-500/20 bg-emerald-500/5",
+  amber: "text-amber-500 border-amber-500/20 bg-amber-500/5",
+  danger: "text-red-500 border-red-500/20 bg-red-500/5"
 };
 
 export function ExecutiveOverview({ metrics, risks }: ExecutiveOverviewProps) {
   return (
-    <div className="grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-transform duration-300 hover:-translate-y-0.5"
+            className="rounded-xl border border-border bg-card/40 p-5 space-y-4"
           >
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="text-xs uppercase tracking-[0.24em] text-muted">{metric.label}</div>
-              <div className={`rounded-full bg-gradient-to-br px-3 py-1 text-xs ${toneMap[metric.tone]}`}>
-                live
-              </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{metric.label}</span>
+              <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${toneMap[metric.tone]}`}>
+                Live
+              </span>
             </div>
-            <div className="font-display text-3xl text-white">{metric.value}</div>
-            <div className="mt-3 text-sm leading-6 text-muted">{metric.detail}</div>
+            <div className="text-3xl font-black tabular-nums tracking-tight">{metric.value}</div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{metric.detail}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-3">
-        <div className="rounded-2xl border border-accent/15 bg-accent/10 p-4">
-          <div className="flex items-center gap-2 text-sm text-accent">
+      <div className="flex flex-col gap-4">
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
             <ShieldCheck className="h-4 w-4" />
-            Today&apos;s Risks
+            Operational Risk Radar
           </div>
-          <p className="mt-3 text-sm leading-6 text-[#d6ebff]">
-            Pulse converts signal drift into operator-grade risk calls so moderators can act
-            earlier than the report queue.
+          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            Pulse prioritizes emerging risks by cross-referencing signal velocity with historical patterns, allowing you to intercept conflict before the manual report queue spikes.
           </p>
         </div>
 
         {risks.map((risk) => (
           <div
             key={risk.id}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-transform duration-300 hover:-translate-y-0.5"
+            className="rounded-xl border border-border bg-card/40 p-5 transition-colors hover:bg-card/60"
           >
-            <div className="mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 text-sm font-bold tracking-tight">
                 {risk.level === "warning" ? (
-                  <AlertTriangle className="h-4 w-4 text-danger" />
+                  <AlertTriangle className="h-4 w-4 text-red-500" />
                 ) : (
-                  <Gauge className="h-4 w-4 text-amber" />
+                  <Activity className="h-4 w-4 text-amber-500" />
                 )}
                 {risk.title}
               </div>
-              <div className="rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-muted">
+              <span className="rounded-md border border-border bg-muted/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                 {risk.horizon}
-              </div>
+              </span>
             </div>
-            <div className="text-sm leading-6 text-muted">{risk.detail}</div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{risk.detail}</p>
           </div>
         ))}
       </div>

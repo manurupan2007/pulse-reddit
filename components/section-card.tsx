@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 
 type SectionCardProps = {
-  eyebrow?: string;
   title: string;
   description?: string;
   rightSlot?: ReactNode;
@@ -10,7 +9,6 @@ type SectionCardProps = {
 };
 
 export function SectionCard({
-  eyebrow,
   title,
   description,
   rightSlot,
@@ -18,24 +16,21 @@ export function SectionCard({
   className = ""
 }: SectionCardProps) {
   return (
-    <section className={`glass-panel rounded-tile panel-glow p-5 md:p-6 ${className}`}>
-      <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-2">
-          {eyebrow ? (
-            <div className="font-display text-[10px] uppercase tracking-[0.42em] text-accent/80">
-              {eyebrow}
-            </div>
+    <section className={`glass-panel p-6 shadow-sm border border-border bg-card/50 ${className}`}>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1.5">
+          <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+          {description ? (
+            <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
+              {description}
+            </p>
           ) : null}
-          <div>
-            <h2 className="font-display text-xl text-white md:text-2xl">{title}</h2>
-            {description ? (
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{description}</p>
-            ) : null}
-          </div>
         </div>
-        {rightSlot}
+        <div className="shrink-0">{rightSlot}</div>
       </div>
-      {children}
+      <div className="relative">
+        {children}
+      </div>
     </section>
   );
 }
