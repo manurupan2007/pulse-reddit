@@ -3,16 +3,7 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { defaultScenarioState, listPresetSubreddits } from "@/lib/core/engine";
-import { ActionKey, DataMode, ExperienceMode, PulseRuntimePayload, ScenarioState } from "@/types";
-
-export type DashboardView = 
-  | "overview" 
-  | "operations" 
-  | "simulation" 
-  | "cascade" 
-  | "intelligence" 
-  | "story" 
-  | "devvit";
+import { ActionKey, DataMode, ExperienceMode, PulseRuntimePayload, ScenarioState, DashboardView } from "@/types";
 
 type RuntimeState = {
   payload: PulseRuntimePayload | null;

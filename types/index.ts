@@ -11,6 +11,15 @@ export type DataMode = "simulated" | "live";
 
 export type ExperienceMode = "operator" | "story";
 
+export type DashboardView = 
+  | "overview" 
+  | "operations" 
+  | "simulation" 
+  | "cascade" 
+  | "intelligence" 
+  | "story" 
+  | "devvit";
+
 export type HorizonLabel = "6h" | "24h" | "3d";
 
 export type ScenarioConfidence = "low" | "moderate" | "high";
