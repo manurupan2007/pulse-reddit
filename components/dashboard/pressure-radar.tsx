@@ -11,7 +11,7 @@ import {
   Legend
 } from "recharts";
 
-import { PressurePoint } from "@/lib/types";
+import { PressurePoint } from "@/types";
 
 type PressureRadarProps = {
   history: PressurePoint[];

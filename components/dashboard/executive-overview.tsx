@@ -1,6 +1,6 @@
 import { AlertTriangle, Gauge, ShieldCheck, Activity } from "lucide-react";
 
-import { Alert, ExecutiveMetric } from "@/lib/types";
+import { Alert, ExecutiveMetric } from "@/types";
 
 type ExecutiveOverviewProps = {
   metrics: ExecutiveMetric[];

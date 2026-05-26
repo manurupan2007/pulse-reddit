@@ -9,7 +9,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-import { PersonalityBreakdown } from "@/lib/types";
+import { PersonalityBreakdown } from "@/types";
 
 type CommunityDnaProps = {
   personality: PersonalityBreakdown;

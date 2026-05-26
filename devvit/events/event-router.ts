@@ -1,5 +1,5 @@
 import { appendRuntimeEvent, markRuntimeMode } from "@/devvit/events/pulse-event-store";
-import { CommunityEvent, DataMode } from "@/lib/types";
+import { CommunityEvent, DataMode } from "@/types";
 
 type RawDevvitEvent = Record<string, unknown> & {
   subreddit?: string;

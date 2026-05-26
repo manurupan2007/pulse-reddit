@@ -1,203 +1,130 @@
-# Pulse
+# Pulse | Subreddit Digital Twin & Moderation Forecast Engine
 
-Pulse is a hackathon-grade Reddit moderation platform prototype built as a subreddit digital twin.
+[![Production Build](https://github.com/manurupan2007/pulse-reddit/actions/workflows/build.yml/badge.svg)](https://github.com/manurupan2007/pulse-reddit/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?logo=typescript)](https://www.typescriptlang.org/)
 
-It is not an AI moderator and it does not replace human judgment. Pulse is a moderation decision-support system that combines Devvit-style event ingestion, rolling heuristic signal analysis, and scenario simulation to help moderators understand how a community is behaving now and how it may react next.
+**Pulse** is a professional-grade moderation decision-support platform designed for Reddit communities. It serves as a **digital twin** of a subreddit, providing live community pressure modeling, conflict propagation visualization, and intervention simulation.
 
-## Why Pulse feels different
+> "Pulse is designed to feel like NASA mission control for Reddit communities, transforming moderation from a reactive queue into a proactive operational system."
 
-Most moderation dashboards explain what already happened.
+---
 
-Pulse is designed to feel like NASA mission control for Reddit communities:
+## ⚡ Quick Links
+- [Live Demo](https://pulse-reddit.vercel.app) (Coming Soon)
+- [Architecture Deep Dive](./docs/architecture.md)
+- [Judge's Summary](./docs/judge-summary.md)
+- [Demo Script](./docs/demo-script.md)
 
-- It turns subreddit behavior into a live community pressure model.
-- It shows how conflict spreads across threads, clusters, and content formats.
-- It lets moderators simulate actions before they enforce them.
-- It presents moderation as an operational system, not just a queue.
+---
 
-## Product positioning
+## 🌟 Key Features
 
-Pulse is not:
+### 📡 1. Community State Digital Twin
+Pulse tracks dozens of high-fidelity signals (sentiment velocity, meme saturation, comment acceleration, etc.) and transforms them into a unified community health model.
+- **Stability Modeling:** Heuristic assessment of community resilience.
+- **Conflict Pressure:** Real-time monitoring of escalation potential.
+- **Moderator Load Forecasting:** Predicting intervention demand before the report queue spikes.
 
-- an AI moderator
-- a censorship tool
-- a replacement for moderators
+### 🧪 2. Intervention Simulator
+Test moderation strategies in a sandboxed environment before applying them to the live community.
+- **Policy Testing:** Simulate "Slow Mode," keyword bans, or thread locks.
+- **Impact Analysis:** Forecast engagement trajectory, backlash probability, and retention impact.
+- **Narrative Explanations:** Get heuristic-driven reasoning for forecasted outcomes.
 
-Pulse is:
+### 🌊 3. Conflict Cascade Visualization
+Visualize how tension propagates across threads and reply-chain clusters. 
+- **Backlash Risk:** Probability modeling of meta-conflict.
+- **Containment Analysis:** Visualizing the effectiveness of moderator interventions.
 
-- a moderation decision-support system
-- a subreddit behavioral forecasting platform
-- a community dynamics simulator
-- a moderation intelligence layer
+### 🕹️ 4. Storytelling & Training Mode
+Built-in "Operator Story" mode for demonstration and moderator training, with auto-playing scenario beats that walk through a dramatic community incident.
 
-## What is in this prototype
+---
 
-- A polished Next.js mission-control dashboard with the original Pulse design system preserved
-- Simulated and live-ish runtime adapters
-- A richer heuristic engine for volatility, pressure, fatigue, resilience, and escalation
-- A Devvit app structure with settings, triggers, event routing, and install flow architecture
-- A scenario simulator with confidence indicators and explanation narratives
-- A conflict cascade visualization engine
-- A storytelling mode for judge demos with auto-playing scenario beats
+## 🛠 Tech Stack
 
-## Core experience
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | Next.js 14 (App Router), React 18, Tailwind CSS |
+| **Animations** | Framer Motion |
+| **Data Viz** | Recharts, Custom SVG Visualization Engines |
+| **Language** | TypeScript (Strict Mode) |
+| **Platform** | Devvit (Reddit Developer Platform Architecture) |
 
-### 1. Community state engine
+---
 
-Pulse tracks:
+## 📂 Repository Structure
 
-- sentiment
-- toxicity
-- reports
-- removals
-- engagement depth
-- posting velocity
-- topic volatility
-- meme saturation
-- comment acceleration
-- reply-chain intensity
-- moderator intervention frequency
-- sentiment volatility
-- user churn risk
-- controversial-topic emergence
-- cross-thread conflict propagation
-
-These signals feed a rolling score layer:
-
-- community stability
-- conflict pressure
-- moderator load
-- discussion quality
-- health index
-- moderator fatigue
-- community resilience
-- volatility radar
-- intervention effectiveness
-- escalation probability
-- community pressure
-
-### 2. Scenario simulator
-
-Moderators can simulate:
-
-- slow mode
-- thread locks
-- stricter automod
-- keyword bans
-- higher karma requirements
-- temporary topic bans
-- limiting media posts
-- restricting political discussions
-
-Pulse then forecasts:
-
-- engagement trajectory
-- backlash probability
-- moderator workload impact
-- toxicity trend
-- retention impact
-- discussion quality forecast
-
-### 3. Conflict cascade engine
-
-Pulse visualizes how conflict spreads through:
-
-- source threads
-- reply-chain clusters
-- meta backlash
-- meme amplification
-- cross-thread spillover
-- moderator containment
-
-### 4. Devvit architecture credibility
-
-The repo includes a realistic Devvit prototype surface:
-
-- [devvit/index.ts](</C:/Users/manur/Documents/Reddit hack/devvit/index.ts>)
-- [devvit/config/settings.ts](</C:/Users/manur/Documents/Reddit hack/devvit/config/settings.ts>)
-- [devvit/triggers/community-triggers.ts](</C:/Users/manur/Documents/Reddit hack/devvit/triggers/community-triggers.ts>)
-- [devvit/events/event-router.ts](</C:/Users/manur/Documents/Reddit hack/devvit/events/event-router.ts>)
-- [devvit/events/pulse-event-store.ts](</C:/Users/manur/Documents/Reddit hack/devvit/events/pulse-event-store.ts>)
-- [devvit.json](</C:/Users/manur/Documents/Reddit hack/devvit.json>)
-
-This layer models:
-
-- subreddit install flow
-- moderator permission checks
-- installation settings
-- event trigger ingestion
-- live-ish rolling state retention
-- handoff into the Pulse runtime adapter
-
-## Runtime architecture
-
-### Frontend
-
-- Next.js App Router
-- TypeScript
-- TailwindCSS
-- Framer Motion
-- Recharts
-
-### Backend and orchestration
-
-- Next.js API routes for runtime payloads and simulation responses
-- adapter layer for simulated vs live-ish subreddit modes
-- heuristic scoring engine
-- scripted event ingestion for demo-safe realtime behavior
-- Devvit integration architecture and configuration surface
-
-### Important files
-
-- [components/pulse-dashboard.tsx](</C:/Users/manur/Documents/Reddit hack/components/pulse-dashboard.tsx>) - main dashboard and interaction shell
-- [lib/pulse-engine.ts](</C:/Users/manur/Documents/Reddit hack/lib/pulse-engine.ts>) - signal model, scoring, forecast, scenario logic, cascade data
-- [lib/pulse-adapters.ts](</C:/Users/manur/Documents/Reddit hack/lib/pulse-adapters.ts>) - simulated/live runtime adapter boundary
-- [lib/use-pulse-runtime.ts](</C:/Users/manur/Documents/Reddit hack/lib/use-pulse-runtime.ts>) - loading states, fake realtime updates, keyboard shortcuts, story autoplay
-- [app/api/runtime/route.ts](</C:/Users/manur/Documents/Reddit hack/app/api/runtime/route.ts>) - unified runtime payload endpoint
-- [app/api/simulate/route.ts](</C:/Users/manur/Documents/Reddit hack/app/api/simulate/route.ts>) - scenario endpoint
-
-## How it works
-
-1. Pulse selects a subreddit profile or live-ish mode.
-2. A runtime adapter assembles rolling community state.
-3. Event pressure is converted into heuristic signals and weighted scores.
-4. Forecast, executive widgets, alerts, and the cascade view update together.
-5. Moderator actions can be simulated before enforcement.
-6. Story mode can auto-play a dramatic demo scenario for judges.
-
-## Demo controls
-
-- `D` toggles storytelling mode
-- `L` switches live/simulated mode
-- `Space` starts or pauses autoplay
-- `R` resets the current scenario
-- `1-4` jumps between subreddit presets
-
-## Installation
-
-```bash
-npm install
-npm run dev
+```text
+├── app/               # Next.js App Router (Pages & API)
+├── components/        # React Components
+│   ├── dashboard/     # Domain-specific dashboard modules
+│   └── ui/            # Reusable design system primitives
+├── devvit/            # Reddit Devvit App Logic (Triggers & Events)
+├── hooks/             # Custom React Hooks
+├── lib/               # Core Heuristic Engine & Business Logic
+│   └── services/      # Adapters and external integrations
+├── types/             # Consolidated TypeScript definitions
+└── docs/              # Detailed product and technical documentation
 ```
 
-Open `http://localhost:3000`.
+---
 
-## Production verification
+## 🚀 Getting Started
 
-```bash
-npm run build
-```
+### Prerequisites
+- Node.js 18+
+- npm or yarn
 
-The current prototype builds successfully.
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/manurupan2007/pulse-reddit.git
+   cd pulse-reddit
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deployment notes
+### Operator Controls (Hotkeys)
+- `D`: Toggle Storytelling Mode
+- `L`: Switch between Live/Simulated data
+- `Space`: Play/Pause Story Autoplay
+- `R`: Reset current simulation
+- `1-4`: Jump between subreddit presets
 
-- The Next.js app is ready for static demo hosting or a standard Node deployment.
-- The Devvit layer is structured as a believable prototype surface and compile-safe architecture, not a fully credentialed live Reddit deployment.
-- To turn this into a real Devvit app, the next step would be replacing the mock event store with real Redis-backed state and wiring trigger payloads to Reddit production data.
+---
 
-## Submission docs
+## 🛡️ Design Decisions & Scalability
 
-- [Architecture](</C:/Users/manur/Documents/Reddit hack/docs/architecture.md>)
-- [Demo Script](</C:/Users/manur/Documents/Reddit hack/docs/demo-script.md>)
-- [Judge Summary](</C:/Users/manur/Documents/Reddit hack/docs/judge-summary.md>)
+- **Heuristic Engine:** Pulse uses a deterministic heuristic engine (`lib/pulse-engine.ts`) instead of non-deterministic LLMs for its core scoring. This ensures consistent, explainable results that moderators can trust.
+- **Adapter Pattern:** The runtime uses an adapter pattern (`lib/services/pulse-adapters.ts`) to switch between simulated demo data and live event streams, making it easy to plug in real Reddit API data.
+- **Atomic Design:** UI components are strictly separated between pure primitives (`ui/`) and feature-rich modules (`dashboard/`), ensuring a clean, maintainable component tree.
+
+---
+
+## 🛤️ Roadmap
+- [ ] **Real-time Redis Persistence:** Move from ephemeral in-memory state to Redis-backed event stores.
+- [ ] **Multi-Subreddit Aggregation:** Executive views for moderator teams managing dozens of subreddits.
+- [ ] **Automated Intervention Hook:** Optional "Auto-Apply" for simulations that hit a certain confidence threshold.
+
+---
+
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## 👥 Contributors
+- **Manurupan** - *Lead Engineer & UI/UX Architect*
+
+---
+*Built for the Reddit Mod Tools Hackathon 2026*

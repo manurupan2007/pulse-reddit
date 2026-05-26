@@ -2,21 +2,21 @@
 
 import { AlertTriangle, BrainCircuit, Keyboard, Radar, RadioTower, Sparkles, Zap, ChevronRight, Activity, ShieldAlert } from "lucide-react";
 
-import { ActivityHeatmap } from "@/components/activity-heatmap";
-import { AlertStack } from "@/components/alert-stack";
-import { CascadeView } from "@/components/cascade-view";
-import { CommunityDna } from "@/components/community-dna";
-import { DevvitOpsPanel } from "@/components/devvit-ops-panel";
-import { EventFeed } from "@/components/event-feed";
-import { ExecutiveOverview } from "@/components/executive-overview";
-import { ForecastTimeline } from "@/components/forecast-timeline";
-import { MetricOrb } from "@/components/metric-orb";
-import { PressureRadar } from "@/components/pressure-radar";
-import { SectionCard } from "@/components/section-card";
-import { SimulatorPanel } from "@/components/simulator-panel";
-import { StoryModePanel } from "@/components/story-mode-panel";
+import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
+import { AlertStack } from "@/components/dashboard/alert-stack";
+import { CascadeView } from "@/components/dashboard/cascade-view";
+import { CommunityDna } from "@/components/dashboard/community-dna";
+import { DevvitOpsPanel } from "@/components/dashboard/devvit-ops-panel";
+import { EventFeed } from "@/components/dashboard/event-feed";
+import { ExecutiveOverview } from "@/components/dashboard/executive-overview";
+import { ForecastTimeline } from "@/components/dashboard/forecast-timeline";
+import { MetricCard } from "@/components/ui/metric-card";
+import { PressureRadar } from "@/components/dashboard/pressure-radar";
+import { SectionCard } from "@/components/ui/section-card";
+import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
+import { StoryModePanel } from "@/components/dashboard/story-mode-panel";
+import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
 import { buildRuntimePayload, listScenarioActions } from "@/lib/pulse-engine";
-import { usePulseRuntime } from "@/lib/use-pulse-runtime";
 
 const fallbackPayload = buildRuntimePayload();
 
@@ -179,7 +179,7 @@ export function PulseDashboard() {
         {/* Primary Scores */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {primaryMetrics.map((metric) => (
-            <MetricOrb key={metric.label} {...metric} />
+            <MetricCard key={metric.label} {...metric} />
           ))}
         </div>
 

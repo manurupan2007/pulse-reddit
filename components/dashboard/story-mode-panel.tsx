@@ -2,7 +2,7 @@
 
 import { Play, Pause, Radio, Sparkles, BookOpen } from "lucide-react";
 
-import { ExperienceMode, StoryStep } from "@/lib/types";
+import { ExperienceMode, StoryStep } from "@/types";
 
 type StoryModePanelProps = {
   steps: StoryStep[];

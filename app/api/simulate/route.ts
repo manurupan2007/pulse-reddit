@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { buildForecastPreview, simulateScenario } from "@/lib/pulse-engine";
-import { DataMode, ScenarioState } from "@/lib/types";
+import { DataMode, ScenarioState } from "@/types";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as {

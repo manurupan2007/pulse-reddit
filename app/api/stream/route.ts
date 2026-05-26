@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 import { getRuntimeState } from "@/devvit/events/pulse-event-store";
-import { DataMode } from "@/lib/types";
+import { DataMode } from "@/types";
 
 export const dynamic = "force-dynamic";
 

@@ -21,7 +21,7 @@ import {
   ScenarioState,
   StoryStep,
   TopicCluster
-} from "@/lib/types";
+} from "@/types";
 
 import { getRuntimeState } from "@/devvit/events/pulse-event-store";
 

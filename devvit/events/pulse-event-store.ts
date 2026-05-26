@@ -1,4 +1,4 @@
-import { CommunityEvent, DataMode } from "@/lib/types";
+import { CommunityEvent, DataMode } from "@/types";
 
 type SubredditRuntimeState = {
   subreddit: string;

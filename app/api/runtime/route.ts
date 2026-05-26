@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { loadPulseRuntime } from "@/lib/pulse-adapters";
-import { DataMode, ScenarioState } from "@/lib/types";
+import { loadPulseRuntime } from "@/lib/services/pulse-adapters";
+import { DataMode, ScenarioState } from "@/types";
 
 export async function GET(request: NextRequest) {
   const subreddit = request.nextUrl.searchParams.get("subreddit") ?? "r/politics";

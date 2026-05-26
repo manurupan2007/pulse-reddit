@@ -1,4 +1,4 @@
-import { ActivityCell } from "@/lib/types";
+import { ActivityCell } from "@/types";
 
 type ActivityHeatmapProps = {
   heatmap: ActivityCell[];

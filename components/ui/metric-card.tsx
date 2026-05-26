@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-type MetricOrbProps = {
+type MetricCardProps = {
   label: string;
   value: number;
   tone: "accent" | "cyan" | "magenta" | "lime" | "amber" | "danger";
@@ -18,7 +18,7 @@ const toneColors = {
   danger: "text-red-500 stroke-red-500"
 };
 
-export function MetricOrb({ label, value, tone, detail }: MetricOrbProps) {
+export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

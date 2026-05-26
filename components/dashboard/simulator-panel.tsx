@@ -1,8 +1,8 @@
 "use client";
 
-import { Switch } from "./switch";
+import { Switch } from "@/components/ui/switch";
 
-import { ScenarioAction, ScenarioOutcome, ScenarioState } from "@/lib/types";
+import { ScenarioAction, ScenarioOutcome, ScenarioState } from "@/types";
 
 type SimulatorPanelProps = {
   actions: ScenarioAction[];

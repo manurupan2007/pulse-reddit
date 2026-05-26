@@ -1,5 +1,5 @@
 import { buildForecastPreview, buildRuntimePayload, simulateScenario } from "@/lib/pulse-engine";
-import { DataMode, PulseRuntimePayload, ScenarioState } from "@/lib/types";
+import { DataMode, PulseRuntimePayload, ScenarioState } from "@/types";
 
 export type AdapterRequest = {
   subreddit: string;

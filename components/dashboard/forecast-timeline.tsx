@@ -13,7 +13,7 @@ import {
   LineChart
 } from "recharts";
 
-import { ForecastPoint } from "@/lib/types";
+import { ForecastPoint } from "@/types";
 
 type ForecastTimelineProps = {
   forecast: ForecastPoint[];

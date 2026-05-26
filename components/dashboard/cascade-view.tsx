@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-import { ScenarioOutcome } from "@/lib/types";
+import { ScenarioOutcome } from "@/types";
 
 type CascadeViewProps = {
   outcome: ScenarioOutcome;

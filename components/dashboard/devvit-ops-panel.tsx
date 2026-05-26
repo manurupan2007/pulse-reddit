@@ -1,6 +1,6 @@
 import { DatabaseZap, RadioTower, Settings2, ShieldCheck, CheckCircle2, Clock } from "lucide-react";
 
-import { CommunityEvent, DevvitStatus, ModeratorWorkflow } from "@/lib/types";
+import { CommunityEvent, DevvitStatus, ModeratorWorkflow } from "@/types";
 
 type DevvitOpsPanelProps = {
   devvit: DevvitStatus;

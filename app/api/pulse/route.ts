@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { routeDevvitEvent } from "@/devvit/events/event-router";
 import { buildCommunityTwin } from "@/lib/pulse-engine";
-import { DataMode } from "@/lib/types";
+import { DataMode } from "@/types";
 
 export async function GET(request: NextRequest) {
   const subreddit = request.nextUrl.searchParams.get("subreddit") ?? undefined;

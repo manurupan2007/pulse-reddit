@@ -1,6 +1,6 @@
 import { BellRing, Lock, ShieldBan, Sparkles, TriangleAlert, Activity, Settings } from "lucide-react";
 
-import { CommunityEvent } from "@/lib/types";
+import { CommunityEvent } from "@/types";
 
 type EventFeedProps = {
   events: CommunityEvent[];

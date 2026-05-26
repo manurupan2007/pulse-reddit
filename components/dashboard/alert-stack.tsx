@@ -1,6 +1,6 @@
 import { ShieldAlert, Siren, Sparkles, AlertCircle } from "lucide-react";
 
-import { Alert } from "@/lib/types";
+import { Alert } from "@/types";
 
 type AlertStackProps = {
   alerts: Alert[];
