@@ -55,17 +55,17 @@ export function OverviewPage({ subreddit, twin, outcome, setView }: OverviewPage
       {/* Main Content Layout */}
       <div className="grid gap-10 lg:grid-cols-3">
         {/* Cascade Preview */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex">
           <SectionCard
             title="Conflict Propagation Preview"
             description="Real-time heuristic mapping of tension movement across thread clusters."
             className="bg-card/20 backdrop-blur-sm border-primary/10 flex-1"
           >
-            <div className="h-[440px] flex flex-col pt-4">
-              <div className="flex-1 min-h-0">
-                <CascadeView outcome={outcome} />
+            <div className="flex flex-col pt-4 h-full">
+              <div className="flex-1 min-h-[300px]">
+                <CascadeView outcome={outcome} mode="preview" />
               </div>
-              <div className="pt-8 mt-6 border-t border-border/40 flex justify-center">
+              <div className="pt-8 mt-6 border-t border-border/40 flex justify-center shrink-0">
                 <button 
                   onClick={() => setView("cascade")}
                   className="text-[11px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2 hover:underline group"

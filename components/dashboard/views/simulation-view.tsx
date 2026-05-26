@@ -46,26 +46,26 @@ export function SimulationPage({
             <ForecastTimeline forecast={twin.forecast} />
           </SectionCard>
         </div>
-        <div className="space-y-8">
-          <SectionCard title="Heuristic Explanation" description="Reasoning engine output.">
-            <div className="space-y-4">
+        <div className="space-y-8 flex flex-col">
+          <SectionCard title="Heuristic Explanation" description="Reasoning engine output." className="flex-1">
+            <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
               {outcome.explanation.map((line, i) => (
-                <div key={i} className="text-sm text-muted-foreground leading-relaxed p-4 rounded-lg bg-card/50 border border-border text-foreground">
+                <div key={i} className="text-[13px] text-muted-foreground leading-relaxed p-4 rounded-xl bg-card/50 border border-border/40 text-foreground transition-colors hover:border-primary/20">
                   {line}
                 </div>
               ))}
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 italic text-sm text-foreground text-center">
+              <div className="p-5 rounded-xl bg-primary/5 border border-primary/20 italic text-sm text-foreground text-center shadow-inner">
                 &quot;{outcome.narrative}&quot;
               </div>
             </div>
           </SectionCard>
-          <div className="glass-panel p-5 space-y-4">
-            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest">
-              <span>Confidence</span>
+          <div className="glass-panel p-6 space-y-5">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+              <span className="text-muted-foreground/60">Sim Confidence</span>
               <span className={outcome.confidence === 'high' ? 'text-emerald-500' : 'text-amber-500'}>{outcome.confidence}</span>
             </div>
-            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-              <div className={`h-full ${outcome.confidence === 'high' ? 'bg-emerald-500' : 'bg-amber-500'} w-3/4 animate-pulse`} />
+            <div className="h-1.5 w-full bg-muted/20 rounded-full overflow-hidden shadow-inner">
+              <div className={`h-full ${outcome.confidence === 'high' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]' : 'bg-amber-500'} w-3/4 animate-pulse`} />
             </div>
           </div>
         </div>

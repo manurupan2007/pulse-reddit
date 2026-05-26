@@ -30,19 +30,19 @@ export function OperationsPage({ twin }: OperationsPageProps) {
         </div>
         <div className="space-y-8">
           <SectionCard title="Operational Stream" description="Live signal ingestion.">
-            <div className="h-[600px] overflow-hidden">
+            <div className="h-[640px] overflow-y-auto custom-scrollbar pr-2">
               <EventFeed events={twin.events} />
             </div>
           </SectionCard>
-          <div className="glass-panel p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Shortcuts</span>
-              <Keyboard className="h-4 w-4 text-muted-foreground" />
+          <div className="glass-panel p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Operator Shortcuts</span>
+              <Keyboard className="h-4 w-4 text-primary opacity-60" />
             </div>
-            <div className="grid gap-2">
-              <ShortcutItem label="D" action="Story" />
-              <ShortcutItem label="L" action="Toggle Live" />
-              <ShortcutItem label="R" action="Reset" />
+            <div className="grid gap-3">
+              <ShortcutItem label="D" action="Launch Story" />
+              <ShortcutItem label="L" action="Toggle Node" />
+              <ShortcutItem label="R" action="Halt Sync" />
             </div>
           </div>
         </div>

@@ -6,63 +6,74 @@ import { ScenarioOutcome } from "@/types";
 
 type CascadeViewProps = {
   outcome: ScenarioOutcome;
+  mode?: "full" | "preview";
 };
 
-export function CascadeView({ outcome }: CascadeViewProps) {
+export function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
+  const isPreview = mode === "preview";
+
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-card/40 p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Conflict Wave</div>
-          <div className="text-sm font-bold">
-            Backlash Risk: <span className="text-red-500">{outcome.backlashProbability}%</span>
+    <div className={`space-y-6 ${isPreview ? 'h-full flex flex-col justify-center' : ''}`}>
+      {!isPreview && (
+        <div className="rounded-xl border border-border bg-card/40 p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Conflict Wave</div>
+            <div className="text-sm font-bold">
+              Backlash Risk: <span className="text-red-500">{outcome.backlashProbability}%</span>
+            </div>
           </div>
+          <ConflictWave outcome={outcome} />
         </div>
-        <ConflictWave outcome={outcome} />
+      )}
+
+      <div className={`rounded-xl border border-border bg-card/40 p-5 shadow-sm ${isPreview ? 'border-none bg-transparent p-0' : ''}`}>
+        {!isPreview && (
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Propagation Map</div>
+            <div className="text-sm font-bold text-foreground">{outcome.cascadeMap.headline}</div>
+          </div>
+        )}
+        <PropagationMap outcome={outcome} />
+        {!isPreview && (
+          <div className="mt-4 flex flex-col gap-2">
+            {outcome.cascadeMap.notes.map((note) => (
+              <div key={note} className="text-xs text-muted-foreground leading-relaxed flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-border shrink-0" />
+                {note}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card/40 p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Propagation Map</div>
-          <div className="text-sm font-bold text-foreground">{outcome.cascadeMap.headline}</div>
-        </div>
-        <PropagationMap outcome={outcome} />
-        <div className="mt-4 flex flex-col gap-2">
-          {outcome.cascadeMap.notes.map((note) => (
-            <div key={note} className="text-xs text-muted-foreground leading-relaxed flex items-center gap-2">
-              <div className="h-1 w-1 rounded-full bg-border shrink-0" />
-              {note}
-            </div>
+      {!isPreview && (
+        <div className="grid gap-4">
+          {outcome.cascade.map((node, index) => (
+            <motion.div
+              key={node.label}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+              className="rounded-xl border border-border bg-card/40 p-5"
+            >
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-sm font-bold tracking-tight">{node.label}</div>
+                  <div className="mt-1 text-xs text-muted-foreground leading-relaxed">{node.note}</div>
+                </div>
+                <div className="text-xl font-black tabular-nums">{node.after}</div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                <Meter label="Before" value={node.before} tone="from-red-500 to-amber-500" />
+                <div className="text-center text-[10px] font-black tracking-widest text-muted-foreground px-2">
+                  SHIFT
+                </div>
+                <Meter label="After" value={node.after} tone="from-sky-500 to-blue-500" />
+              </div>
+            </motion.div>
           ))}
         </div>
-      </div>
-
-      <div className="grid gap-4">
-        {outcome.cascade.map((node, index) => (
-          <motion.div
-            key={node.label}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
-            className="rounded-xl border border-border bg-card/40 p-5"
-          >
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <div>
-                <div className="text-sm font-bold tracking-tight">{node.label}</div>
-                <div className="mt-1 text-xs text-muted-foreground leading-relaxed">{node.note}</div>
-              </div>
-              <div className="text-xl font-black tabular-nums">{node.after}</div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-              <Meter label="Before" value={node.before} tone="from-red-500 to-amber-500" />
-              <div className="text-center text-[10px] font-black tracking-widest text-muted-foreground px-2">
-                SHIFT
-              </div>
-              <Meter label="After" value={node.after} tone="from-sky-500 to-blue-500" />
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      )}
     </div>
   );
 }

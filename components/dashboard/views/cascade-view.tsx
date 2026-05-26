@@ -36,32 +36,36 @@ export function CascadePage({ outcome, runtime }: CascadePageProps) {
             )}
           </div>
         </div>
-        <div className="flex-1 flex flex-col md:flex-row gap-6 p-6">
-          <div className="flex-1 glass-panel bg-card/5 p-4 flex items-center justify-center relative">
-             {/* Large full-screen style cascade */}
-             <div className="w-full h-full max-w-4xl max-h-4xl scale-125">
-               <CascadeView outcome={outcome} />
+        <div className="flex-1 flex flex-col lg:flex-row gap-8 p-6 overflow-hidden">
+          <div className="flex-1 glass-panel bg-card/5 p-8 flex items-center justify-center relative overflow-hidden">
+             {/* Full Tactical Cascade */}
+             <div className="w-full h-full max-w-5xl">
+               <CascadeView outcome={outcome} mode="full" />
              </div>
           </div>
-          <div className="w-full md:w-80 space-y-4 overflow-y-auto custom-scrollbar shrink-0">
-            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">Signal Mapping</div>
-            {outcome.cascade.map((c) => (
-              <div key={c.label} className="p-4 rounded-xl border border-border bg-card/40 space-y-3 transition-colors hover:bg-card/60">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="text-xs font-bold leading-tight">{c.label}</div>
-                  <div className={`text-xs font-black ${c.after < 40 ? 'text-emerald-500' : (c.after < 70 ? 'text-amber-500' : 'text-red-500')}`}>
-                    {c.after}%
+          <div className="w-full lg:w-96 space-y-6 overflow-y-auto custom-scrollbar shrink-0 pr-2">
+            <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-20 pb-4 border-b border-border/40">
+              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Live Signal Mapping</div>
+            </div>
+            <div className="space-y-4 pt-2">
+              {outcome.cascade.map((c) => (
+                <div key={c.label} className="p-5 rounded-2xl border border-border/40 bg-card/40 space-y-4 transition-all hover:bg-card/60 group">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="text-sm font-bold leading-tight group-hover:text-primary transition-colors">{c.label}</div>
+                    <div className={`text-sm font-black tabular-nums ${c.after < 40 ? 'text-emerald-500' : (c.after < 70 ? 'text-amber-500' : 'text-red-500')}`}>
+                      {c.after}%
+                    </div>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground leading-relaxed font-medium">{c.note}</div>
+                  <div className="h-1.5 w-full bg-muted/20 rounded-full overflow-hidden">
+                     <div 
+                      className={`h-full transition-all duration-1000 ${c.after < 40 ? 'bg-emerald-500' : (c.after < 70 ? 'bg-amber-500' : 'bg-red-500')}`} 
+                      style={{ width: `${c.after}%` }} 
+                     />
                   </div>
                 </div>
-                <div className="text-[10px] text-muted-foreground leading-relaxed">{c.note}</div>
-                <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                   <div 
-                    className={`h-full transition-all duration-1000 ${c.after < 40 ? 'bg-emerald-500' : (c.after < 70 ? 'bg-amber-500' : 'bg-red-500')}`} 
-                    style={{ width: `${c.after}%` }} 
-                   />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
