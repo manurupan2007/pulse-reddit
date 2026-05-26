@@ -5,12 +5,22 @@ import { startTransition, useEffect, useState } from "react";
 import { defaultScenarioState, listPresetSubreddits } from "@/lib/core/engine";
 import { ActionKey, DataMode, ExperienceMode, PulseRuntimePayload, ScenarioState } from "@/types";
 
+export type DashboardView = 
+  | "overview" 
+  | "operations" 
+  | "simulation" 
+  | "cascade" 
+  | "intelligence" 
+  | "story" 
+  | "devvit";
+
 type RuntimeState = {
   payload: PulseRuntimePayload | null;
   loading: boolean;
   error: string | null;
   mode: DataMode;
   experienceMode: ExperienceMode;
+  view: DashboardView;
   autoplay: boolean;
   tick: number;
   visualTick: number;
@@ -54,6 +64,7 @@ export function usePulseRuntime() {
     error: null,
     mode: "simulated",
     experienceMode: "operator",
+    view: "overview",
     autoplay: false,
     tick: 0,
     visualTick: 0,
@@ -337,11 +348,18 @@ export function usePulseRuntime() {
         ...current,
         storyIndex: index,
         experienceMode: "story",
+        view: "story",
         scenario: {
           ...defaultScenarioState,
           ...step.actionPreset
         }
       }));
+    });
+  }
+
+  function setView(view: DashboardView) {
+    startTransition(() => {
+      setState((current) => ({ ...current, view }));
     });
   }
 
@@ -375,6 +393,7 @@ export function usePulseRuntime() {
     jumpToStory,
     stepForward,
     stepBackward,
-    setPlaybackSpeed
+    setPlaybackSpeed,
+    setView
   };
 }
