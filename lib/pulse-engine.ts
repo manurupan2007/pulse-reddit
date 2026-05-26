@@ -76,6 +76,125 @@ const orderedActionKeys: ActionKey[] = [
   "restrictPolitics"
 ];
 
+function generateSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+const CATEGORIES = ["politics", "news", "meme", "support", "meta", "gaming", "tech", "culture"];
+
+export function generateProceduralPreset(subredditName: string): TwinPreset {
+  const normalized = subredditName.toLowerCase().replace(/^r\//, "");
+  const seed = generateSeed(normalized);
+  const getVal = (offset: number, min = 10, max = 90) => 
+    Math.round(min + pseudoRandom(seed + offset) * (max - min));
+
+  // Keyword bias detection
+  const isPolitics = /politics|news|election|world|court/.test(normalized);
+  const isMeme = /meme|funny|humor|joke|wholesome/.test(normalized);
+  const isGaming = /gaming|game|play|ps5|xbox|pc|nintendo/.test(normalized);
+  const isSupport = /support|help|advice|ask|mental/.test(normalized);
+  const isChaotic = /wallstreet|chaos|riot|fight/.test(normalized);
+
+  const signals: CommunitySignal = {
+    sentiment: isSupport ? getVal(1, 60, 95) : (isPolitics ? getVal(1, 20, 50) : getVal(1, 30, 80)),
+    toxicity: isPolitics ? getVal(2, 50, 90) : (isMeme ? getVal(2, 10, 40) : getVal(2, 20, 60)),
+    reports: isPolitics || isChaotic ? getVal(3, 60, 95) : getVal(3, 10, 50),
+    removals: isPolitics || isChaotic ? getVal(4, 50, 85) : getVal(4, 5, 40),
+    engagementDepth: isSupport || isGaming ? getVal(5, 60, 90) : getVal(5, 30, 70),
+    postingVelocity: isPolitics || isMeme || isChaotic ? getVal(6, 70, 98) : getVal(6, 20, 60),
+    topicVolatility: isPolitics || isChaotic ? getVal(7, 70, 95) : getVal(7, 10, 50),
+    memeSaturation: isMeme ? getVal(8, 70, 98) : (isPolitics ? getVal(8, 5, 30) : getVal(8, 20, 60)),
+    politicalHeat: isPolitics ? getVal(9, 80, 100) : getVal(9, 0, 30),
+    supportIndex: isSupport ? getVal(10, 70, 95) : getVal(10, 5, 40),
+    commentAcceleration: isPolitics || isChaotic ? getVal(11, 60, 95) : getVal(11, 20, 60),
+    replyChainIntensity: isPolitics || isGaming ? getVal(12, 60, 95) : getVal(12, 20, 60),
+    interventionFrequency: isPolitics || isChaotic ? getVal(13, 60, 90) : getVal(13, 10, 50),
+    sentimentVolatility: isPolitics || isChaotic ? getVal(14, 60, 95) : getVal(14, 10, 50),
+    churnRisk: isChaotic ? getVal(15, 50, 80) : getVal(15, 5, 40),
+    controversyEmergence: isPolitics || isChaotic ? getVal(16, 70, 98) : getVal(16, 10, 50),
+    crossThreadPropagation: isPolitics || isChaotic ? getVal(17, 60, 95) : getVal(17, 5, 40)
+  };
+
+  const population = `${(getVal(18, 1, 50) / 10).toFixed(1)}M members`;
+  const activeUsers = getVal(19, 5000, 100000);
+
+  const topicLabels = isPolitics 
+    ? ["Election debate", "Policy shift", "Candidate controversy", "Geopolitical tension"]
+    : isMeme 
+    ? ["Template trend", "Viral OC", "Repost surge", "Community meta"]
+    : isGaming
+    ? ["Patch notes", "Metagame shift", "E-sports bracket", "Console launch"]
+    : ["Recent trends", "Top discussions", "New engagement", "Community focus"];
+
+  const topics: TopicCluster[] = topicLabels.map((label, i) => ({
+    label,
+    momentum: getVal(20 + i, 40, 95),
+    volatility: getVal(24 + i, 30, 90),
+    polarity: getVal(28 + i, 10, 90),
+    density: getVal(32 + i, 20, 80),
+    category: CATEGORIES[getVal(36 + i, 0, CATEGORIES.length - 1)] as any
+  }));
+
+  const workflows: ModeratorWorkflow[] = [
+    { id: "queue", label: "Queue triage", status: signals.reports > 70 ? "stressed" : "healthy", queueDepth: getVal(40, 10, 300), etaMinutes: getVal(41, 2, 40), owner: "u/mod-one" },
+    { id: "appeals", label: "Modmail review", status: "watch", queueDepth: getVal(42, 5, 100), etaMinutes: getVal(43, 10, 60), owner: "u/mod-two" }
+  ];
+
+  const storySteps: StoryStep[] = [
+    {
+      id: "proc-1",
+      title: "Community heartbeat analysis",
+      body: `Pulse has detected a ${signals.topicVolatility > 60 ? "highly volatile" : "stable"} pattern in r/${normalized}. ${isPolitics ? "Political friction is driving the current cycle." : "Standard engagement loops are holding steady."}`,
+      actionPreset: {},
+      focus: "executive"
+    },
+    {
+      id: "proc-2",
+      title: "Emerging propagation check",
+      body: `Signals suggest conflict is ${signals.crossThreadPropagation > 50 ? "rapidly spreading" : "contained"} across primary threads. Pulse recommends proactive monitoring.`,
+      actionPreset: { slowMode: signals.commentAcceleration > 70 },
+      focus: "cascade"
+    }
+  ];
+
+  return {
+    subreddit: `r/${normalized}`,
+    tagline: isPolitics ? "News-cycle combustion chamber" : (isMeme ? "Fast-moving entertainment cluster" : "Dynamic conversational hub"),
+    population,
+    activeUsers,
+    sentimentBias: isPolitics ? "combative" : (isSupport ? "empathetic" : "reactive"),
+    signals,
+    topics,
+    workflows,
+    liveEvents: [
+      {
+        id: "ev-1",
+        type: "comment_report",
+        title: "Sudden activity burst",
+        detail: "Pattern matching suggests a potential surge in manual removals.",
+        severity: "medium",
+        actor: "Pulse Observer",
+        threadLabel: "Active thread",
+        weight: 12,
+        tags: ["reports", "velocity"],
+        delta: { reports: 5, commentAcceleration: 4 }
+      }
+    ],
+    storySteps
+  };
+}
+
 export const defaultScenarioState: ScenarioState = {
   slowMode: false,
   lockThreads: false,
@@ -1024,7 +1143,12 @@ function buildCurrentClock(mode: DataMode, tick: number) {
 }
 
 function pickPreset(subreddit?: string) {
-  return presets.find((entry) => entry.subreddit === subreddit) ?? presets[0];
+  if (subreddit) {
+    const existing = presets.find((entry) => entry.subreddit.toLowerCase() === subreddit.toLowerCase() || entry.subreddit.toLowerCase() === `r/${subreddit.toLowerCase()}`);
+    if (existing) return existing;
+    return generateProceduralPreset(subreddit);
+  }
+  return presets[0];
 }
 
 function buildTwinCore(options: BuildTwinOptions): CommunityTwin {

@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertTriangle, BrainCircuit, Keyboard, Radar, RadioTower, Sparkles, Zap, ChevronRight, Activity, ShieldAlert } from "lucide-react";
+import { AlertTriangle, BrainCircuit, Keyboard, Radar, RadioTower, Sparkles, Zap, ChevronRight, Activity, ShieldAlert, Search, Command, Cpu, Globe, Server, Terminal } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 import { AlertStack } from "@/components/dashboard/alert-stack";
@@ -39,13 +40,57 @@ export function PulseDashboard() {
     resetScenario,
     jumpToStory,
     soundCue,
-    transport
+    transport,
+    stepForward,
+    stepBackward,
+    setPlaybackSpeed,
+    playbackSpeed
   } = usePulseRuntime();
+
+  const [searchInput, setSearchInput] = useState("");
+  const [bootSequence, setBootSequence] = useState(true);
+  const [bootText, setBootText] = useState("Initializing Signal Ingestion...");
+
+  useEffect(() => {
+    if (!bootSequence) return;
+    const texts = [
+      "Building behavioral model...",
+      "Mapping controversy clusters...",
+      "Calibrating heuristic engine...",
+      "Syncing community DNA...",
+      "Operational Readiness Confirmed."
+    ];
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= texts.length) {
+        clearInterval(interval);
+        setTimeout(() => setBootSequence(false), 500);
+      } else {
+        setBootText(texts[i]);
+        i++;
+      }
+    }, 600);
+    return () => clearInterval(interval);
+  }, [bootSequence]);
 
   const runtime = payload ?? fallbackPayload;
   const twin = runtime.twin;
   const outcome = runtime.outcome;
   const actions = listScenarioActions();
+
+  if (bootSequence) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center font-mono">
+        <div className="relative w-64 h-1 bg-muted overflow-hidden rounded-full mb-8">
+          <div className="absolute inset-0 bg-primary animate-pulse w-full h-full" style={{ animationDuration: '1.5s' }} />
+        </div>
+        <div className="flex items-center gap-3 text-primary animate-pulse">
+          <Terminal className="h-5 w-5" />
+          <span className="text-sm tracking-widest uppercase">{bootText}</span>
+        </div>
+      </div>
+    );
+  }
 
   const primaryMetrics = [
     {
@@ -80,6 +125,11 @@ export function PulseDashboard() {
     }
   ];
 
+  const handleSetSubreddit = (name: string) => {
+    setBootSequence(true);
+    setSubreddit(name);
+  };
+
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       {/* Header / Hero Section */}
@@ -89,7 +139,7 @@ export function PulseDashboard() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <Radar className="h-5 w-5" />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <div className="text-base font-bold tracking-tight">Pulse</div>
               <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
                 Moderation Intelligence
@@ -97,7 +147,34 @@ export function PulseDashboard() {
             </div>
           </div>
 
+          <div className="flex items-center flex-1 max-w-md mx-4">
+            <div className="relative w-full group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                type="text"
+                placeholder="Analyze subreddit (e.g. r/wallstreetbets)"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSetSubreddit(searchInput)}
+                className="w-full bg-muted/50 border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background transition-all"
+              />
+              <kbd className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border border-border bg-background text-[10px] text-muted-foreground hidden sm:block">
+                ENT
+              </kbd>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-4 mr-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-r border-border pr-4">
+              <div className="flex items-center gap-1.5">
+                <Cpu className="h-3 w-3" />
+                <span>Lat: 18ms</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Globe className="h-3 w-3" />
+                <span>Heuristic v2.4</span>
+              </div>
+            </div>
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary border border-border text-xs font-medium text-muted-foreground">
               <span className="relative flex h-2 w-2">
                 <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${mode === 'live' ? 'animate-ping bg-emerald-500' : 'bg-zinc-500'}`}></span>
@@ -107,7 +184,7 @@ export function PulseDashboard() {
             </div>
             <select
               value={subreddit}
-              onChange={(e) => setSubreddit(e.target.value)}
+              onChange={(e) => handleSetSubreddit(e.target.value)}
               className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               {presetOptions.map((option) => (
@@ -122,65 +199,75 @@ export function PulseDashboard() {
 
       <div className="mx-auto max-w-[1560px] px-4 py-8 md:px-6 flex flex-col gap-8">
         {/* Main Overview Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="grid gap-6 lg:grid-cols-4">
+          <div className="lg:col-span-3 flex flex-col gap-6">
             <div className="space-y-4">
-              <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-balance">
-                Operational forecast for subreddit communities.
+              <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl text-balance max-w-4xl">
+                The digital twin for <span className="text-primary">{subreddit}</span> communities.
               </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Pulse models community behavior by ingesting live signals and simulating intervention outcomes. 
-                Identify emerging conflict dynamics before they impact your moderation capacity.
+              <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
+                Identify emerging conflict dynamics and simulate intervention outcomes. 
+                Pulse models community behavior by ingesting live signals from Reddit triggers.
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="glass-panel p-5 flex flex-col justify-between h-32">
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Source</span>
-                  <Activity className="h-4 w-4" />
-                </div>
-                <div className="text-sm font-medium mt-auto">{twin.sourceLabel}</div>
-              </div>
-              <div className="glass-panel p-5 flex flex-col justify-between h-32">
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Sync Status</span>
-                  <RadioTower className="h-4 w-4" />
-                </div>
-                <div className="text-sm font-medium mt-auto">{twin.devvit.lastSync}</div>
-              </div>
-              <div className="glass-panel p-5 flex flex-col justify-between h-32">
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span className="text-xs font-semibold uppercase tracking-wider">Active Users</span>
-                  <Sparkles className="h-4 w-4 text-amber-500" />
-                </div>
-                <div className="text-2xl font-bold mt-auto">{twin.activeUsers.toLocaleString()}</div>
-              </div>
+            {/* Top Primary Scores (Now shifted into the main flow) */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {primaryMetrics.map((metric) => (
+                <MetricCard key={metric.label} {...metric} />
+              ))}
             </div>
+
+            {/* Conflict Cascade Hero Section */}
+            <SectionCard
+              title="Conflict Cascade Engine"
+              description="Real-time visualization of tension propagation and containment effectiveness."
+              className="border-primary/20 bg-primary/5"
+            >
+              <CascadeView outcome={outcome} />
+            </SectionCard>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
              <HealthCard twin={twin} />
-             <div className="glass-panel p-4 space-y-3">
+             <div className="glass-panel p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Shortcuts</span>
                   <Keyboard className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid gap-2">
                   <ShortcutItem label="D" action="Toggle Story" />
                   <ShortcutItem label="L" action="Toggle Live" />
                   <ShortcutItem label="Space" action="Autoplay" />
                   <ShortcutItem label="R" action="Reset" />
                 </div>
              </div>
+             
+             {/* Technical Credibility Widget */}
+             <div className="glass-panel p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Model Status</span>
+                  <Command className="h-4 w-4 text-primary" />
+                </div>
+                <div className="space-y-3">
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Ingestion Queue</span>
+                      <span className="font-mono text-emerald-500">Nominal</span>
+                   </div>
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Confidence</span>
+                      <span className="font-mono">{outcome.confidence === 'high' ? '94%' : '78%'}</span>
+                   </div>
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Latency</span>
+                      <span className="font-mono text-primary">12ms</span>
+                   </div>
+                   <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-primary animate-pulse w-3/4" />
+                   </div>
+                </div>
+             </div>
           </div>
-        </div>
-
-        {/* Primary Scores */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {primaryMetrics.map((metric) => (
-            <MetricCard key={metric.label} {...metric} />
-          ))}
         </div>
 
         {/* Dashboard Sections */}
@@ -294,6 +381,8 @@ export function PulseDashboard() {
               onJump={jumpToStory}
               onToggleAutoplay={setAutoplay}
               onSetMode={setExperienceMode}
+              stepForward={stepForward}
+              stepBackward={stepBackward}
             />
           </SectionCard>
         </div>

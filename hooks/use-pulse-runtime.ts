@@ -13,11 +13,13 @@ type RuntimeState = {
   experienceMode: ExperienceMode;
   autoplay: boolean;
   tick: number;
+  visualTick: number;
   subreddit: string;
   scenario: ScenarioState;
   storyIndex: number;
   soundCue: string | null;
   transport: "polling" | "stream";
+  playbackSpeed: number;
 };
 
 async function fetchRuntimePayload(
@@ -54,12 +56,21 @@ export function usePulseRuntime() {
     experienceMode: "operator",
     autoplay: false,
     tick: 0,
+    visualTick: 0,
     subreddit: presetOptions[0].subreddit,
     scenario: defaultScenarioState,
     storyIndex: 0,
     soundCue: null,
-    transport: "polling"
+    transport: "polling",
+    playbackSpeed: 1
   });
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setState((current) => ({ ...current, visualTick: current.visualTick + 1 }));
+    }, 2000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -110,7 +121,7 @@ export function usePulseRuntime() {
       return;
     }
 
-    const intervalMs = state.autoplay ? 8500 : 12000;
+    const intervalMs = (state.autoplay ? 6000 : 10000) / state.playbackSpeed;
     const interval = window.setInterval(() => {
       startTransition(() => {
         setState((current) => ({
@@ -122,7 +133,7 @@ export function usePulseRuntime() {
     }, intervalMs);
 
     return () => window.clearInterval(interval);
-  }, [state.mode, state.autoplay]);
+  }, [state.mode, state.autoplay, state.playbackSpeed]);
 
   useEffect(() => {
     if (state.mode !== "live") {
@@ -205,10 +216,10 @@ export function usePulseRuntime() {
           };
         });
       });
-    }, 9000);
+    }, 8000 / state.playbackSpeed);
 
     return () => window.clearInterval(interval);
-  }, [state.autoplay, state.experienceMode, state.payload]);
+  }, [state.autoplay, state.experienceMode, state.payload, state.playbackSpeed]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -278,10 +289,11 @@ export function usePulseRuntime() {
   }
 
   function setSubreddit(subreddit: string) {
+    const name = subreddit.startsWith("r/") ? subreddit : `r/${subreddit}`;
     startTransition(() => {
       setState((current) => ({
         ...current,
-        subreddit,
+        subreddit: name,
         tick: 0,
         storyIndex: 0,
         scenario: defaultScenarioState
@@ -333,6 +345,24 @@ export function usePulseRuntime() {
     });
   }
 
+  function stepForward() {
+    if (!state.payload) return;
+    const steps = state.payload.twin.storySteps;
+    const nextIndex = (state.storyIndex + 1) % steps.length;
+    jumpToStory(nextIndex);
+  }
+
+  function stepBackward() {
+    if (!state.payload) return;
+    const steps = state.payload.twin.storySteps;
+    const nextIndex = (state.storyIndex - 1 + steps.length) % steps.length;
+    jumpToStory(nextIndex);
+  }
+
+  function setPlaybackSpeed(speed: number) {
+    setState((current) => ({ ...current, playbackSpeed: speed }));
+  }
+
   return {
     ...state,
     presetOptions,
@@ -342,6 +372,9 @@ export function usePulseRuntime() {
     setSubreddit,
     toggleAction,
     resetScenario,
-    jumpToStory
+    jumpToStory,
+    stepForward,
+    stepBackward,
+    setPlaybackSpeed
   };
 }

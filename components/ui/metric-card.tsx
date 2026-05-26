@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 type MetricCardProps = {
   label: string;
@@ -19,6 +20,17 @@ const toneColors = {
 };
 
 export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    setDisplayValue(value);
+    const interval = setInterval(() => {
+      const jitter = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+      setDisplayValue(prev => Math.max(0, Math.min(100, value + jitter)));
+    }, 2000 + Math.random() * 2000);
+    return () => clearInterval(interval);
+  }, [value]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -46,7 +58,7 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
               className={`${toneColors[tone]} transition-all duration-700 ease-out`}
               strokeWidth="10"
               strokeDasharray={251.2}
-              strokeDashoffset={251.2 - (251.2 * value) / 100}
+              strokeDashoffset={251.2 - (251.2 * displayValue) / 100}
               strokeLinecap="round"
               fill="transparent"
               r="40"
@@ -54,8 +66,8 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
               cy="50"
             />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-sm font-bold tracking-tight">
-            {value}
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-bold tracking-tight tabular-nums">
+            {displayValue}
           </div>
         </div>
       </div>

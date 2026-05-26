@@ -136,7 +136,7 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
         </linearGradient>
       </defs>
 
-      {outcome.cascadeMap.links.map((link) => {
+      {outcome.cascadeMap.links.map((link, i) => {
         const from = nodeById.get(link.from);
         const to = nodeById.get(link.to);
         if (!from || !to) {
@@ -147,17 +147,34 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
         const path = `M${from.x},${from.y} C${controlX},${from.y} ${controlX},${to.y} ${to.x},${to.y}`;
 
         return (
-          <motion.path
-            key={`${link.from}-${link.to}`}
-            d={path}
-            fill="none"
-            stroke={link.effect === "contain" ? "url(#containLink)" : "url(#spreadLink)"}
-            strokeWidth={Math.max(1.5, link.strength / 25)}
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.8 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-          />
+          <g key={`${link.from}-${link.to}`}>
+            <motion.path
+              d={path}
+              fill="none"
+              stroke={link.effect === "contain" ? "url(#containLink)" : "url(#spreadLink)"}
+              strokeWidth={Math.max(1.5, link.strength / 25)}
+              strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 0.8 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+            {/* Propagation Pulse */}
+            <motion.circle
+              r="2"
+              fill={link.effect === "contain" ? "#3b82f6" : "#ef4444"}
+              initial={{ offsetDistance: "0%" }}
+              animate={{ offsetDistance: "100%" }}
+              transition={{
+                duration: 2 + pseudoRandom(i) * 2,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              style={{
+                offsetPath: `path("${path}")`,
+                boxShadow: link.effect === "contain" ? '0 0 8px #3b82f6' : '0 0 8px #ef4444'
+              }}
+            />
+          </g>
         );
       })}
 
@@ -175,8 +192,16 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
           <motion.g
             key={node.id}
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
+            animate={{ 
+              opacity: 1, 
+              scale: [1, 1.05, 1],
+            }}
+            transition={{ 
+              delay: index * 0.05, 
+              duration: 3 + pseudoRandom(index) * 2,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
           >
             <circle
               cx={node.x}
@@ -186,7 +211,9 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
               fillOpacity="0.1"
               stroke={color}
               strokeWidth="1"
-            />
+            >
+              <animate attributeName="r" values={`${8 + node.intensity / 10};${10 + node.intensity / 10};${8 + node.intensity / 10}`} dur="3s" repeatCount="indefinite" />
+            </circle>
             <circle cx={node.x} cy={node.y} r={2.5 + node.intensity / 20} fill={color} />
             <text x={node.x} y={node.y + 32} textAnchor="middle" className="fill-muted-foreground text-[10px] font-bold uppercase tracking-tight">
               {node.label}
@@ -196,4 +223,8 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
       })}
     </svg>
   );
+}
+
+function pseudoRandom(seed: number) {
+  return (Math.sin(seed) + 1) / 2;
 }

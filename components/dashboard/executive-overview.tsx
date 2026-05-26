@@ -1,4 +1,5 @@
 import { AlertTriangle, Gauge, ShieldCheck, Activity } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { Alert, ExecutiveMetric } from "@/types";
 
@@ -21,19 +22,7 @@ export function ExecutiveOverview({ metrics, risks }: ExecutiveOverviewProps) {
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {metrics.map((metric) => (
-          <div
-            key={metric.label}
-            className="rounded-xl border border-border bg-card/40 p-5 space-y-4"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{metric.label}</span>
-              <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${toneMap[metric.tone]}`}>
-                Live
-              </span>
-            </div>
-            <div className="text-3xl font-black tabular-nums tracking-tight">{metric.value}</div>
-            <p className="text-xs text-muted-foreground leading-relaxed">{metric.detail}</p>
-          </div>
+          <ExecutiveMetricCard key={metric.label} metric={metric} />
         ))}
       </div>
 
@@ -70,6 +59,32 @@ export function ExecutiveOverview({ metrics, risks }: ExecutiveOverviewProps) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ExecutiveMetricCard({ metric }: { metric: ExecutiveMetric }) {
+  const [val, setVal] = useState(metric.value);
+
+  useEffect(() => {
+    setVal(metric.value);
+    const interval = setInterval(() => {
+      const jitter = Math.floor(Math.random() * 3) - 1;
+      setVal(prev => Math.max(0, Math.min(100, metric.value + jitter)));
+    }, 3000 + Math.random() * 3000);
+    return () => clearInterval(interval);
+  }, [metric.value]);
+
+  return (
+    <div className="rounded-xl border border-border bg-card/40 p-5 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{metric.label}</span>
+        <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${toneMap[metric.tone as keyof typeof toneMap]}`}>
+          Live
+        </span>
+      </div>
+      <div className="text-3xl font-black tabular-nums tracking-tight">{val}</div>
+      <p className="text-xs text-muted-foreground leading-relaxed">{metric.detail}</p>
     </div>
   );
 }
