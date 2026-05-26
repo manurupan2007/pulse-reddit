@@ -17,7 +17,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
 import { StoryModePanel } from "@/components/dashboard/story-mode-panel";
 import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
-import { buildRuntimePayload, listScenarioActions } from "@/lib/pulse-engine";
+import { buildRuntimePayload, listScenarioActions } from "@/lib/core/engine";
 
 const fallbackPayload = buildRuntimePayload();
 

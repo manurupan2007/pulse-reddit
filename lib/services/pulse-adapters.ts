@@ -1,4 +1,4 @@
-import { buildForecastPreview, buildRuntimePayload, simulateScenario } from "@/lib/pulse-engine";
+import { buildForecastPreview, buildRuntimePayload, simulateScenario } from "@/lib/core/engine";
 import { DataMode, PulseRuntimePayload, ScenarioState } from "@/types";
 
 export type AdapterRequest = {

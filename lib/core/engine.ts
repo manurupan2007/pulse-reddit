@@ -1,3 +1,16 @@
+/**
+ * Pulse Heuristic Engine (Core)
+ * 
+ * This module contains the primary business logic for the Pulse platform. 
+ * It handles community state modeling, procedural subreddit generation, 
+ * scoring heuristics, and scenario simulation.
+ * 
+ * Architecture:
+ * - Deterministic Signal Modeling: Uses weighted heuristics instead of non-deterministic LLMs.
+ * - Procedural Generation: Seed-based community profile generation for custom analysis.
+ * - Scenario Simulation: Outcome forecasting based on moderation intervention vectors.
+ */
+
 import {
   ActionKey,
   ActivityCell,
@@ -24,6 +37,8 @@ import {
 } from "@/types";
 
 import { getRuntimeState } from "@/devvit/events/pulse-event-store";
+
+// --- Internal Types ---
 
 type TwinPreset = {
   subreddit: string;
@@ -62,6 +77,12 @@ type SimulateOptions = {
   tick?: number;
 };
 
+// --- Constants & Config ---
+
+const SYSTEM_VERSION = "0.4.0-stable";
+const DEFAULT_SUBREDDIT = "r/politics";
+const CATEGORIES = ["politics", "news", "meme", "support", "meta", "gaming", "tech", "culture"] as const;
+
 const clamp = (value: number, min = 0, max = 100) =>
   Math.min(max, Math.max(min, Math.round(value)));
 
@@ -75,6 +96,8 @@ const orderedActionKeys: ActionKey[] = [
   "limitMediaPosts",
   "restrictPolitics"
 ];
+
+// --- Utility Functions ---
 
 function generateSeed(str: string): number {
   let hash = 0;
@@ -91,8 +114,12 @@ function pseudoRandom(seed: number): number {
   return x - Math.floor(x);
 }
 
-const CATEGORIES = ["politics", "news", "meme", "support", "meta", "gaming", "tech", "culture"];
+// --- Procedural Generation Engine ---
 
+/**
+ * Generates a unique behavioral profile for any subreddit name.
+ * Uses a seed-based approach to ensure deterministic results for the same community.
+ */
 export function generateProceduralPreset(subredditName: string): TwinPreset {
   const normalized = subredditName.toLowerCase().replace(/^r\//, "");
   const seed = generateSeed(normalized);

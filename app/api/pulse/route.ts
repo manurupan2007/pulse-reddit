@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { routeDevvitEvent } from "@/devvit/events/event-router";
-import { buildCommunityTwin } from "@/lib/pulse-engine";
+import { buildCommunityTwin } from "@/lib/core/engine";
 import { DataMode } from "@/types";
 
 export async function GET(request: NextRequest) {
-  const subreddit = request.nextUrl.searchParams.get("subreddit") ?? undefined;
+  const subreddit = request.nextUrl.searchParams.get("subreddit");
   const mode = (request.nextUrl.searchParams.get("mode") as DataMode | null) ?? "simulated";
   const tick = Number(request.nextUrl.searchParams.get("tick") ?? 0);
 
+  // System Health Check
+  if (!subreddit && request.nextUrl.searchParams.has("health")) {
+    return NextResponse.json({
+      status: "operational",
+      version: "0.4.0",
+      timestamp: new Date().toISOString()
+    });
+  }
+
   return NextResponse.json(
     buildCommunityTwin({
-      subreddit,
+      subreddit: subreddit ?? undefined,
       mode,
       tick
     })

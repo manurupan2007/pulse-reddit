@@ -2,7 +2,7 @@
 
 import { startTransition, useEffect, useState } from "react";
 
-import { defaultScenarioState, listPresetSubreddits } from "@/lib/pulse-engine";
+import { defaultScenarioState, listPresetSubreddits } from "@/lib/core/engine";
 import { ActionKey, DataMode, ExperienceMode, PulseRuntimePayload, ScenarioState } from "@/types";
 
 type RuntimeState = {

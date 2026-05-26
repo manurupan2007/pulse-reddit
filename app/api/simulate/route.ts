@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildForecastPreview, simulateScenario } from "@/lib/pulse-engine";
+import { buildForecastPreview, simulateScenario } from "@/lib/core/engine";
 import { DataMode, ScenarioState } from "@/types";
 
 export async function POST(request: NextRequest) {
