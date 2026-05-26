@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { BellRing, Lock, ShieldBan, Sparkles, TriangleAlert, Activity, Settings } from "lucide-react";
 
 import { CommunityEvent } from "@/types";
@@ -18,7 +19,7 @@ const iconMap: Record<CommunityEvent["type"], React.ReactNode> = {
   thread_lock: <Lock className="h-4 w-4 text-sky-500" />
 };
 
-export function EventFeed({ events }: EventFeedProps) {
+export const EventFeed = memo(function EventFeed({ events }: EventFeedProps) {
   return (
     <div className="space-y-4">
       {events.map((event) => (
@@ -27,7 +28,7 @@ export function EventFeed({ events }: EventFeedProps) {
           className="rounded-lg border border-border bg-card/40 p-4 transition-colors hover:bg-card/60"
         >
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-sm font-bold tracking-tight">
+            <div className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground">
               {iconMap[event.type]}
               {event.title}
             </div>
@@ -51,4 +52,4 @@ export function EventFeed({ events }: EventFeedProps) {
       ))}
     </div>
   );
-}
+});

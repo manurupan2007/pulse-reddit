@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import {
   Area,
   AreaChart,
@@ -17,7 +18,7 @@ type PressureRadarProps = {
   history: PressurePoint[];
 };
 
-export function PressureRadar({ history }: PressureRadarProps) {
+export const PressureRadar = memo(function PressureRadar({ history }: PressureRadarProps) {
   const current = history.at(-2) ?? history.at(-1) ?? history[0];
   const future = history.at(-1) ?? history[0];
 
@@ -100,13 +101,13 @@ export function PressureRadar({ history }: PressureRadarProps) {
       </div>
     </div>
   );
-}
+});
 
-function PressureStat({ label, value, color }: { label: string; value: number; color: string }) {
+const PressureStat = memo(function PressureStat({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="rounded-xl border border-border bg-card/40 p-5 space-y-3">
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
       <div className={`text-3xl font-black tabular-nums tracking-tight ${color}`}>{value}</div>
     </div>
   );
-}
+});

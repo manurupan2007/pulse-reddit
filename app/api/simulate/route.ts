@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildForecastPreview, simulateScenario } from "@/lib/core/engine";
+import { buildRuntimePayload } from "@/lib/core/engine";
 import { DataMode, ScenarioState } from "@/types";
 
 export async function POST(request: NextRequest) {
@@ -16,18 +16,15 @@ export async function POST(request: NextRequest) {
   const mode = body.mode ?? "simulated";
   const tick = body.tick ?? 0;
 
+  const payload = buildRuntimePayload({
+    subreddit,
+    mode,
+    tick,
+    state: actions
+  });
+
   return NextResponse.json({
-    outcome: simulateScenario({
-      subreddit,
-      mode,
-      tick,
-      state: actions
-    }),
-    forecast: buildForecastPreview({
-      subreddit,
-      mode,
-      tick,
-      state: actions
-    })
+    outcome: payload.outcome,
+    forecast: payload.twin.forecast
   });
 }

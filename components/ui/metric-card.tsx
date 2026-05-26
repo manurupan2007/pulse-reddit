@@ -1,7 +1,7 @@
 "use client";
 
+import { memo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
 
 type MetricCardProps = {
   label: string;
@@ -19,14 +19,17 @@ const toneColors = {
   danger: "text-red-500 stroke-red-500"
 };
 
-export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
+export const MetricCard = memo(function MetricCard({ label, value, tone, detail }: MetricCardProps) {
   const [displayValue, setDisplayValue] = useState(value);
 
   useEffect(() => {
     setDisplayValue(value);
     const interval = setInterval(() => {
       const jitter = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
-      setDisplayValue(prev => Math.max(0, Math.min(100, value + jitter)));
+      setDisplayValue(prev => {
+         const next = value + jitter;
+         return Math.max(0, Math.min(100, next));
+      });
     }, 2000 + Math.random() * 2000);
     return () => clearInterval(interval);
   }, [value]);
@@ -74,4 +77,4 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
       </div>
     </motion.div>
   );
-}
+});

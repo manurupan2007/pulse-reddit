@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ActivityCell } from "@/types";
 
 type ActivityHeatmapProps = {
@@ -12,7 +13,7 @@ function tone(intensity: number) {
   return "bg-zinc-800/50";
 }
 
-export function ActivityHeatmap({ heatmap }: ActivityHeatmapProps) {
+export const ActivityHeatmap = memo(function ActivityHeatmap({ heatmap }: ActivityHeatmapProps) {
   const days = [...new Set(heatmap.map((item) => item.day))];
   const hours = [...new Set(heatmap.map((item) => item.hour))];
 
@@ -31,9 +32,9 @@ export function ActivityHeatmap({ heatmap }: ActivityHeatmapProps) {
       </div>
     </div>
   );
-}
+});
 
-function FragmentRow({ day, cells }: { day: string; cells: ActivityCell[] }) {
+const FragmentRow = memo(function FragmentRow({ day, cells }: { day: string; cells: ActivityCell[] }) {
   return (
     <>
       <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{day}</div>
@@ -51,4 +52,4 @@ function FragmentRow({ day, cells }: { day: string; cells: ActivityCell[] }) {
       ))}
     </>
   );
-}
+});

@@ -1484,19 +1484,7 @@ export function simulateScenario(options?: SimulateOptions) {
   return simulateScenarioCore(twin.signals, merged);
 }
 
-export function buildForecastPreview(options?: SimulateOptions) {
-  const twin = buildTwinCore({
-    subreddit: options?.subreddit,
-    mode: options?.mode,
-    tick: options?.tick
-  });
-  const outcome = simulateScenario({
-    subreddit: options?.subreddit,
-    mode: options?.mode,
-    tick: options?.tick,
-    state: options?.state
-  });
-
+export function buildForecastPreview(twin: CommunityTwin, outcome: ScenarioOutcome) {
   return twin.forecast.map((point, index) => ({
     ...point,
     toxicity: clamp(point.toxicity - outcome.toxicityReduction * (0.2 + index * 0.08)),
@@ -1517,12 +1505,8 @@ export function buildRuntimePayload(options?: SimulateOptions): PulseRuntimePayl
     mode: options?.mode,
     tick: options?.tick
   });
-  const outcome = simulateScenario({
-    subreddit: options?.subreddit,
-    mode: options?.mode,
-    state: scenario,
-    tick: options?.tick
-  });
+  
+  const outcome = simulateScenarioCore(twin.signals, scenario);
 
   const focusedStep = twin.storySteps.find((step) =>
     Object.keys(step.actionPreset).some((key) => scenario[key as ActionKey])
@@ -1531,7 +1515,7 @@ export function buildRuntimePayload(options?: SimulateOptions): PulseRuntimePayl
   return {
     twin: {
       ...twin,
-      forecast: buildForecastPreview(options),
+      forecast: buildForecastPreview(twin, outcome),
       cascadeMap: outcome.cascadeMap
     },
     outcome,

@@ -57,18 +57,15 @@ export async function loadPulseRuntime(request: AdapterRequest) {
 }
 
 export async function runScenarioPreview(request: AdapterRequest) {
+  const payload = await buildRuntimePayload({
+    subreddit: request.subreddit,
+    mode: request.mode,
+    tick: request.tick,
+    state: request.scenario
+  });
+
   return {
-    outcome: simulateScenario({
-      subreddit: request.subreddit,
-      mode: request.mode,
-      tick: request.tick,
-      state: request.scenario
-    }),
-    forecast: buildForecastPreview({
-      subreddit: request.subreddit,
-      mode: request.mode,
-      tick: request.tick,
-      state: request.scenario
-    })
+    outcome: payload.outcome,
+    forecast: payload.twin.forecast
   };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert, BarChart3, AlertTriangle, Activity, PlayCircle, RefreshCw, Zap } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
 import { buildRuntimePayload, listScenarioActions } from "@/lib/core/engine";
@@ -94,17 +94,7 @@ export function PulseDashboard() {
     setSubreddit(name);
   };
 
-  const navItems = [
-    { id: "overview", label: "Dashboard", icon: Radar },
-    { id: "operations", label: "Live Ops", icon: Activity },
-    { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
-    { id: "cascade", label: "Propagation", icon: Globe },
-    { id: "intelligence", label: "Intelligence", icon: Search },
-    { id: "story", label: "Demo Mode", icon: PlayCircle },
-    { id: "devvit", label: "Infrastructure", icon: Terminal },
-  ] as const;
-
-  const primaryMetrics = [
+  const primaryMetrics = useMemo(() => [
     {
       label: "Resilience",
       value: twin.scores.stability,
@@ -135,7 +125,17 @@ export function PulseDashboard() {
       tone: "lime" as const,
       detail: "Weighted substantive response metrics."
     }
-  ];
+  ], [twin.scores]);
+
+  const navItems = useMemo(() => [
+    { id: "overview", label: "Dashboard", icon: Radar },
+    { id: "operations", label: "Live Ops", icon: Activity },
+    { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
+    { id: "cascade", label: "Propagation", icon: Globe },
+    { id: "intelligence", label: "Intelligence", icon: Search },
+    { id: "story", label: "Demo Mode", icon: PlayCircle },
+    { id: "devvit", label: "Infrastructure", icon: Terminal },
+  ] as const, []);
 
   return (
     <div className="flex h-screen bg-[#050505] overflow-hidden selection:bg-primary/30 selection:text-white antialiased">

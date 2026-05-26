@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import {
   Area,
   AreaChart,
@@ -19,7 +20,7 @@ type ForecastTimelineProps = {
   forecast: ForecastPoint[];
 };
 
-export function ForecastTimeline({ forecast }: ForecastTimelineProps) {
+export const ForecastTimeline = memo(function ForecastTimeline({ forecast }: ForecastTimelineProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
@@ -132,4 +133,4 @@ export function ForecastTimeline({ forecast }: ForecastTimelineProps) {
       </div>
     </div>
   );
-}
+});

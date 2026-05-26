@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 
 import { ScenarioOutcome } from "@/types";
@@ -9,8 +10,11 @@ type CascadeViewProps = {
   mode?: "full" | "preview";
 };
 
-export function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
+export const CascadeView = memo(function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
   const isPreview = mode === "preview";
+
+  const renderedWave = useMemo(() => <ConflictWave outcome={outcome} />, [outcome]);
+  const renderedMap = useMemo(() => <PropagationMap outcome={outcome} />, [outcome]);
 
   return (
     <div className={`space-y-6 ${isPreview ? 'h-full flex flex-col justify-center' : ''}`}>
@@ -22,7 +26,7 @@ export function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
               Backlash Risk: <span className="text-red-500">{outcome.backlashProbability}%</span>
             </div>
           </div>
-          <ConflictWave outcome={outcome} />
+          {renderedWave}
         </div>
       )}
 
@@ -33,7 +37,7 @@ export function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
             <div className="text-sm font-bold text-foreground">{outcome.cascadeMap.headline}</div>
           </div>
         )}
-        <PropagationMap outcome={outcome} />
+        {renderedMap}
         {!isPreview && (
           <div className="mt-4 flex flex-col gap-2">
             {outcome.cascadeMap.notes.map((note) => (
@@ -76,9 +80,9 @@ export function CascadeView({ outcome, mode = "full" }: CascadeViewProps) {
       )}
     </div>
   );
-}
+});
 
-function Meter({
+const Meter = memo(function Meter({
   label,
   value,
   tone
@@ -98,9 +102,9 @@ function Meter({
       </div>
     </div>
   );
-}
+});
 
-function ConflictWave({ outcome }: { outcome: ScenarioOutcome }) {
+const ConflictWave = memo(function ConflictWave({ outcome }: { outcome: ScenarioOutcome }) {
   const pathBefore = "M0,84 C60,10 120,140 180,74 C240,16 300,136 360,70 C420,18 480,124 540,52";
   const pathAfter = `M0,88 C60,${100 - outcome.backlashProbability} 120,108 180,${80 - outcome.sentimentTrajectory} C240,54 300,${110 - outcome.backlashProbability} 360,70 C420,${62 - outcome.engagementChange} 480,96 540,${96 - outcome.toxicityReduction}`;
 
@@ -129,10 +133,10 @@ function ConflictWave({ outcome }: { outcome: ScenarioOutcome }) {
       />
     </svg>
   );
-}
+});
 
-function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
-  const nodeById = new Map(outcome.cascadeMap.nodes.map((node) => [node.id, node]));
+const PropagationMap = memo(function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
+  const nodeById = useMemo(() => new Map(outcome.cascadeMap.nodes.map((node) => [node.id, node])), [outcome.cascadeMap.nodes]);
 
   return (
     <svg viewBox="0 0 560 188" className="h-44 w-full overflow-visible">
@@ -234,7 +238,7 @@ function PropagationMap({ outcome }: { outcome: ScenarioOutcome }) {
       })}
     </svg>
   );
-}
+});
 
 function pseudoRandom(seed: number) {
   return (Math.sin(seed) + 1) / 2;

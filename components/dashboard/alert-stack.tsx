@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ShieldAlert, Siren, Sparkles, AlertCircle } from "lucide-react";
 
 import { Alert } from "@/types";
@@ -18,7 +19,7 @@ const toneMap = {
   warning: "text-red-500 bg-red-500/10 border-red-500/20"
 };
 
-export function AlertStack({ alerts }: AlertStackProps) {
+export const AlertStack = memo(function AlertStack({ alerts }: AlertStackProps) {
   return (
     <div className="space-y-3">
       {alerts.map((alert) => {
@@ -34,7 +35,7 @@ export function AlertStack({ alerts }: AlertStackProps) {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-tight">{alert.title}</span>
+                <span className="text-sm font-bold tracking-tight text-foreground">{alert.title}</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded border border-border">
                   {alert.horizon} Horizon
                 </span>
@@ -49,4 +50,4 @@ export function AlertStack({ alerts }: AlertStackProps) {
       })}
     </div>
   );
-}
+});
