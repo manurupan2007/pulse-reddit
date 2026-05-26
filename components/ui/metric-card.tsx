@@ -11,7 +11,7 @@ type MetricCardProps = {
 };
 
 const toneColors = {
-  accent: "text-sky-500 stroke-sky-500",
+  accent: "text-sky-500 stroke-sky-500 shadow-[0_0_15px_rgba(14,165,233,0.1)]",
   cyan: "text-cyan-500 stroke-cyan-500",
   magenta: "text-fuchsia-500 stroke-fuchsia-500",
   lime: "text-lime-500 stroke-lime-500",
@@ -36,16 +36,16 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="glass-panel p-5 border border-border bg-card/40 flex flex-col justify-between"
+      className="glass-panel p-5 border border-border/60 bg-card/40 flex flex-col justify-between min-h-[140px] hover:scale-[1.02] transition-transform cursor-default group"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
-          <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
-          <div className="text-[10px] leading-relaxed text-muted-foreground/80 font-medium">{detail}</div>
+        <div className="space-y-1.5 min-w-0">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">{label}</div>
+          <div className="text-[11px] leading-relaxed text-muted-foreground/90 font-medium line-clamp-2">{detail}</div>
         </div>
         
         <div className="relative h-14 w-14 shrink-0">
-          <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+          <svg className="h-full w-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
             <circle
               className="stroke-muted/10"
               strokeWidth="10"
@@ -54,11 +54,12 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
               cx="50"
               cy="50"
             />
-            <circle
-              className={`${toneColors[tone]} transition-all duration-700 ease-out`}
+            <motion.circle
+              className={`${toneColors[tone]}`}
               strokeWidth="10"
               strokeDasharray={251.2}
-              strokeDashoffset={251.2 - (251.2 * displayValue) / 100}
+              animate={{ strokeDashoffset: 251.2 - (251.2 * displayValue) / 100 }}
+              transition={{ duration: 1, ease: "easeOut" }}
               strokeLinecap="round"
               fill="transparent"
               r="40"
@@ -66,7 +67,7 @@ export function MetricCard({ label, value, tone, detail }: MetricCardProps) {
               cy="50"
             />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-sm font-bold tracking-tight tabular-nums">
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-black tracking-tighter tabular-nums text-foreground group-hover:text-primary-foreground group-hover:scale-110 transition-all">
             {displayValue}
           </div>
         </div>

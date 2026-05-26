@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert } from "lucide-react";
+import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert, BarChart3, AlertTriangle } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
@@ -77,13 +77,13 @@ export function PulseDashboard() {
 
   if (bootSequence) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center font-mono">
-        <div className="relative w-64 h-1 bg-muted overflow-hidden rounded-full mb-8">
-          <div className="absolute inset-0 bg-primary animate-pulse w-full h-full" style={{ animationDuration: '1.5s' }} />
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono">
+        <div className="relative w-72 h-1 bg-muted/20 overflow-hidden rounded-full mb-10 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
+          <div className="absolute inset-0 bg-primary animate-pulse w-full h-full" style={{ animationDuration: '1.2s' }} />
         </div>
-        <div className="flex items-center gap-3 text-primary animate-pulse">
-          <Terminal className="h-5 w-5" />
-          <span className="text-sm tracking-widest uppercase">{bootText}</span>
+        <div className="flex items-center gap-4 text-primary animate-pulse group">
+          <Terminal className="h-5 w-5 opacity-70 group-hover:opacity-100" />
+          <span className="text-sm tracking-[0.4em] uppercase font-black">{bootText}</span>
         </div>
       </div>
     );
@@ -95,36 +95,36 @@ export function PulseDashboard() {
   };
 
   const navItems = [
-    { id: "overview", label: "Overview", icon: Radar },
-    { id: "operations", label: "Operations", icon: Terminal },
-    { id: "simulation", label: "Sim Lab", icon: Cpu },
-    { id: "cascade", label: "Cascade", icon: Globe },
+    { id: "overview", label: "Dashboard", icon: Radar },
+    { id: "operations", label: "Live Ops", icon: Activity },
+    { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
+    { id: "cascade", label: "Propagation", icon: Globe },
     { id: "intelligence", label: "Intelligence", icon: Search },
-    { id: "story", label: "Story", icon: ChevronRight },
-    { id: "devvit", label: "Devvit", icon: Terminal },
+    { id: "story", label: "Demo Mode", icon: PlayCircle },
+    { id: "devvit", label: "Infrastructure", icon: Terminal },
   ] as const;
 
   const primaryMetrics = [
     {
-      label: "Stability",
+      label: "Resilience",
       value: twin.scores.stability,
       tone: "accent" as const,
-      detail: "Composite resilience under current pressure."
+      detail: "Community capability to absorb sudden report spikes."
     },
     {
-      label: "Conflict",
+      label: "Tension",
       value: twin.scores.conflictPressure,
       tone: "danger" as const,
-      detail: "Escalation potential across active threads."
+      detail: "Calculated probability of meta-thread escalation."
     },
     {
-      label: "Mod Load",
+      label: "Queue Load",
       value: twin.scores.moderatorLoad,
       tone: "amber" as const,
       detail: "Projected intervention demand this cycle."
     },
     {
-      label: "Pressure",
+      label: "Signals",
       value: twin.scores.communityPressure,
       tone: "cyan" as const,
       detail: "Rolling pressure from reports and velocity."
@@ -133,27 +133,27 @@ export function PulseDashboard() {
       label: "Quality",
       value: twin.scores.discussionQuality,
       tone: "lime" as const,
-      detail: "Depth, civility, and signal retention."
+      detail: "Weighted substantive response metrics."
     }
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden selection:bg-primary selection:text-primary-foreground">
+    <div className="flex h-screen bg-[#050505] overflow-hidden selection:bg-primary/30 selection:text-white antialiased">
       {/* Sidebar Navigation */}
-      <aside className="w-18 md:w-64 border-r border-border bg-card/20 flex flex-col shrink-0 z-50">
-        <div className="p-4 border-b border-border flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-            <Radar className="h-5 w-5" />
+      <aside className="w-20 md:w-72 border-r border-border/40 bg-card/10 backdrop-blur-2xl flex flex-col shrink-0 z-50 transition-all duration-500 ease-in-out">
+        <div className="p-6 border-b border-border/40 flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-2xl shadow-primary/20 hover:scale-105 transition-transform cursor-pointer">
+            <Radar className="h-6 w-6" />
           </div>
-          <div className="hidden md:block">
-            <div className="text-base font-bold tracking-tight text-foreground">Pulse</div>
-            <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+          <div className="hidden md:block space-y-0.5">
+            <div className="text-lg font-black tracking-tighter text-foreground">Pulse <span className="text-primary font-light opacity-80">OS</span></div>
+            <div className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/60 leading-none">
               Moderation Intelligence
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar text-foreground">
+        <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-2 custom-scrollbar text-foreground">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = view === item.id;
@@ -161,71 +161,99 @@ export function PulseDashboard() {
               <button
                 key={item.id}
                 onClick={() => setView(item.id as any)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group ${
+                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group relative ${
                   isActive 
-                    ? "bg-primary text-primary-foreground shadow-md" 
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/10 text-primary border border-primary/20 shadow-inner" 
+                    : "text-muted-foreground/70 hover:bg-muted/30 hover:text-foreground"
                 }`}
               >
-                <Icon className={`h-5 w-5 shrink-0 ${isActive ? "" : "group-hover:scale-110 transition-transform"}`} />
-                <span className="hidden md:block text-sm font-bold">{item.label}</span>
+                <Icon className={`h-5 w-5 shrink-0 ${isActive ? "text-primary shadow-sm" : "group-hover:scale-110 transition-transform"}`} />
+                <span className={`hidden md:block text-[13px] font-black uppercase tracking-widest ${isActive ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>{item.label}</span>
                 {isActive && (
                   <div className="ml-auto hidden md:block">
-                    <ChevronRight className="h-4 w-4 opacity-50" />
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   </div>
+                )}
+                {/* Active Indicator Bar */}
+                {isActive && (
+                  <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-full" />
                 )}
               </button>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-border bg-card/10 space-y-4">
-           <div className="hidden md:block">
+        <div className="p-6 border-t border-border/40 bg-card/5 space-y-6">
+           <div className="hidden md:block transition-all hover:scale-[1.02]">
              <HealthCard twin={twin} />
            </div>
-           <div className="flex items-center justify-between gap-2">
-              <div className={`h-2 w-2 rounded-full ${mode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-500'}`} />
-              <div className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                {mode === "live" ? "Live Node Active" : "Simulated Local"}
+           <div className="flex items-center justify-between px-2">
+              <div className="flex items-center gap-3">
+                <div className={`h-2.5 w-2.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.2)] ${mode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-600'}`} />
+                <div className="hidden md:block text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+                  {mode === "live" ? "System Live" : "Local Sync"}
+                </div>
               </div>
+              <div className="hidden md:block text-[9px] font-mono opacity-40">v1.0.4</div>
            </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <header className="h-16 border-b border-border bg-card/30 backdrop-blur-md flex items-center justify-between px-6 shrink-0 relative z-40">
-          <div className="flex items-center flex-1 max-w-xl">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative border-l border-white/[0.02]">
+        {/* Header Strip */}
+        <header className="h-20 border-b border-border/40 bg-card/20 backdrop-blur-xl flex items-center justify-between px-10 shrink-0 relative z-40">
+          <div className="flex items-center flex-1 max-w-2xl">
              <div className="relative w-full group text-foreground">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors opacity-60" />
                 <input
                   type="text"
-                  placeholder="Analyze subreddit..."
+                  placeholder="Analyze Community Node (r/)..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSetSubreddit(searchInput)}
-                  className="w-full bg-muted/50 border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background transition-all"
+                  className="w-full bg-muted/20 border border-border/40 rounded-xl pl-12 pr-4 py-3 text-[13px] font-medium tracking-tight placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/40 focus:bg-background/80 transition-all shadow-inner"
                 />
+                <kbd className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md border border-border/60 bg-muted/40 text-[9px] text-muted-foreground/60 hidden sm:block font-mono tracking-tighter">
+                  ENTER
+                </kbd>
               </div>
           </div>
 
-          <div className="flex items-center gap-4 ml-6">
-            <select
-              value={subreddit}
-              onChange={(e) => handleSetSubreddit(e.target.value)}
-              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none text-foreground"
-            >
-              {presetOptions.map((option) => (
-                <option key={option.subreddit} value={option.subreddit}>
-                  {option.subreddit}
-                </option>
-              ))}
-            </select>
+          <div className="flex items-center gap-6 ml-10">
+            <div className="flex flex-col items-end gap-1 px-4">
+              <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 leading-none">Active Target</div>
+              <select
+                value={subreddit}
+                onChange={(e) => handleSetSubreddit(e.target.value)}
+                className="bg-transparent text-[15px] font-black tracking-tight text-foreground focus:outline-none cursor-pointer hover:text-primary transition-colors text-right"
+              >
+                {presetOptions.map((option) => (
+                  <option key={option.subreddit} value={option.subreddit} className="bg-[#050505] text-foreground font-sans">
+                    {option.subreddit}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="h-10 w-[1px] bg-border/40" />
+
+            <div className="hidden lg:flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 bg-muted/20 px-6 py-2.5 rounded-xl border border-border/40 shadow-sm">
+              <div className="flex items-center gap-2 border-r border-border/60 pr-6 group">
+                <Cpu className="h-3.5 w-3.5 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+                <span className="font-mono">12ms</span>
+              </div>
+              <div className="flex items-center gap-2 group">
+                <Globe className="h-3.5 w-3.5 text-sky-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                <span className="font-mono">Heuristic v2.4</span>
+              </div>
+            </div>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
-           <div className="mx-auto max-w-[1400px]">
+        {/* Dynamic View Content */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-10 md:p-12 scroll-smooth bg-gradient-to-b from-transparent to-primary/[0.02]">
+           <div className="mx-auto max-w-[1500px]">
               {view === "overview" && (
                 <OverviewPage subreddit={subreddit} twin={twin} outcome={outcome} setView={setView} />
               )}
@@ -269,29 +297,33 @@ export function PulseDashboard() {
            </div>
         </div>
 
-        <footer className="h-10 border-t border-border bg-card/30 flex items-center justify-between px-6 shrink-0 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          <div className="flex items-center gap-6">
-            <span>© 2026 Pulse OS</span>
-            <span>Version {twin.devvit.appVersion}</span>
+        {/* Footer Bar */}
+        <footer className="h-12 border-t border-border/40 bg-card/10 backdrop-blur-md flex items-center justify-between px-10 shrink-0 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 relative z-40">
+          <div className="flex items-center gap-8">
+            <span className="hover:text-primary transition-colors cursor-default">© 2026 Pulse Platform</span>
+            <div className="flex items-center gap-2 border-l border-border/40 pl-8 group">
+              <Terminal className="h-3 w-3 group-hover:text-primary transition-all" />
+              <span className="font-mono lowercase opacity-70 group-hover:opacity-100">rev_{twin.devvit.appVersion}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 group">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 group-hover:animate-ping transition-all"></div>
               Nodes Synchronized
             </div>
-            <span>Transport: {transport}</span>
+            <span className="opacity-40 hover:opacity-100 transition-opacity">Transport: {transport}</span>
           </div>
         </footer>
       </main>
 
       {error && (
-        <div className="fixed bottom-6 right-6 z-[100] max-w-md animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="rounded-lg border border-danger/50 bg-danger/10 p-4 shadow-xl backdrop-blur-md">
-            <div className="flex items-start gap-3">
-              <ShieldAlert className="h-5 w-5 text-danger shrink-0" />
-              <div>
-                <h3 className="text-sm font-bold text-danger">Runtime Error</h3>
-                <p className="mt-1 text-xs text-danger/90 leading-relaxed">{error}</p>
+        <div className="fixed bottom-10 right-10 z-[100] max-w-md animate-in fade-in slide-in-from-bottom-6 duration-500">
+          <div className="rounded-2xl border border-danger/40 bg-danger/5 p-6 shadow-2xl backdrop-blur-3xl ring-1 ring-danger/20">
+            <div className="flex items-start gap-4">
+              <AlertTriangle className="h-6 w-6 text-danger shrink-0 animate-pulse" />
+              <div className="space-y-1">
+                <h3 className="text-[13px] font-black uppercase tracking-widest text-danger">Heuristic Runtime Failure</h3>
+                <p className="text-[13px] text-danger/80 leading-relaxed font-medium">{error}</p>
               </div>
             </div>
           </div>
@@ -301,16 +333,29 @@ export function PulseDashboard() {
   );
 }
 
+import { Activity, PlayCircle } from "lucide-react";
+
+function ShortcutItem({ label, action }: { label: string; action: string }) {
+  return (
+    <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/10 border border-border/30 text-[10px] font-black uppercase tracking-wider transition-colors hover:border-primary/30 group">
+      <span className="text-muted-foreground/60 group-hover:text-foreground">{action}</span>
+      <kbd className="px-2 py-1 rounded border border-border/60 bg-muted/40 text-foreground/80 font-mono ml-3 shadow-inner">
+        {label}
+      </kbd>
+    </div>
+  );
+}
+
 function HealthCard({ twin }: { twin: any }) {
   return (
-    <div className="p-4 rounded-xl border border-border bg-card/40 relative overflow-hidden">
-      <div className="flex items-center gap-3 text-foreground">
-        <div className="relative h-10 w-10 shrink-0">
-          <svg className="h-full w-full" viewBox="0 0 100 100">
-            <circle className="stroke-muted/10" strokeWidth="12" fill="transparent" r="40" cx="50" cy="50" />
+    <div className="p-5 rounded-2xl border border-border/40 bg-card/40 relative overflow-hidden group shadow-inner">
+      <div className="flex items-center gap-4 text-foreground relative z-10">
+        <div className="relative h-12 w-12 shrink-0 group-hover:scale-105 transition-transform duration-500">
+          <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+            <circle className="stroke-muted/10" strokeWidth="14" fill="transparent" r="40" cx="50" cy="50" />
             <circle
-              className="stroke-primary transition-all duration-500"
-              strokeWidth="12"
+              className="stroke-primary transition-all duration-1000 ease-out"
+              strokeWidth="14"
               strokeDasharray={251.2}
               strokeDashoffset={251.2 - (251.2 * twin.scores.healthIndex) / 100}
               strokeLinecap="round"
@@ -320,15 +365,17 @@ function HealthCard({ twin }: { twin: any }) {
               cy="50"
             />
           </svg>
-          <div className="absolute inset-0 flex items-center justify-center font-black text-[10px]">
+          <div className="absolute inset-0 flex items-center justify-center font-black text-[11px] tabular-nums tracking-tighter">
             {twin.scores.healthIndex}%
           </div>
         </div>
-        <div className="min-w-0">
-          <div className="text-xs font-black truncate">{twin.subreddit}</div>
-          <div className="text-[9px] text-muted-foreground uppercase tracking-wider font-bold">Health Level</div>
+        <div className="min-w-0 space-y-0.5">
+          <div className="text-[13px] font-black truncate leading-tight group-hover:text-primary transition-colors">{twin.subreddit}</div>
+          <div className="text-[9px] text-muted-foreground/60 uppercase tracking-[0.2em] font-black leading-none">Security Index</div>
         </div>
       </div>
+      {/* Subtle Background Glow */}
+      <div className="absolute inset-0 bg-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
     </div>
   );
 }
