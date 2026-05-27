@@ -1508,8 +1508,9 @@ export function buildRuntimePayload(options?: SimulateOptions): PulseRuntimePayl
   
   const outcome = simulateScenarioCore(twin.signals, scenario);
 
-  const focusedStep = twin.storySteps.find((step) =>
-    Object.keys(step.actionPreset).some((key) => scenario[key as ActionKey])
+  const steps = twin?.storySteps || [];
+  const focusedStep = steps.find((step) =>
+    step && step.actionPreset && Object.keys(step.actionPreset).some((key) => scenario[key as ActionKey])
   );
 
   return {
