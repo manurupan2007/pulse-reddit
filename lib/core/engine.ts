@@ -881,38 +881,39 @@ function buildAlerts(
   topics: TopicCluster[],
   scores: CommunityScores
 ) {
-  const highestVolatilityTopic = [...topics].sort((left, right) => right.volatility - left.volatility)[0];
+  const sortedTopics = [...(topics || [])].sort((left, right) => (right.volatility || 0) - (left.volatility || 0));
+  const highestVolatilityTopic = sortedTopics[0] || { label: "General Discourse", momentum: 0, volatility: 0 };
 
   const alerts: Alert[] = [
     {
       id: "risk-escalation",
-      level: scores.escalationProbability > 72 ? "warning" : "watch",
-      title: "Political escalation risk rising rapidly",
-      detail: "Conflict pressure, report spikes, and cross-thread propagation are moving together faster than the baseline.",
+      level: (scores.escalationProbability || 0) > 72 ? "warning" : "watch",
+      title: "Tactical escalation risk rising",
+      detail: "Conflict pressure and signal velocity are diverging from baseline patterns.",
       horizon: "6h",
       metric: "Escalation probability"
     },
     {
       id: "risk-meme",
-      level: signals.memeSaturation > 70 ? "watch" : "info",
-      title: "Meme dominance suppressing discussion depth",
-      detail: "Entertainment content is beginning to flatten reply quality and redirect mod attention from discussions.",
+      level: (signals.memeSaturation || 0) > 70 ? "watch" : "info",
+      title: "Format saturation detected",
+      detail: "High-volume content loops are beginning to flatten substantive reply depth.",
       horizon: "24h",
       metric: "Discussion quality"
     },
     {
       id: "risk-reports",
-      level: signals.reports > 60 ? "warning" : "watch",
-      title: "High probability of report surge in next 3 hours",
-      detail: "Pulse detected a velocity pattern that historically precedes queue bursts and manual removals.",
+      level: (signals.reports || 0) > 60 ? "warning" : "watch",
+      title: "Projected report surge",
+      detail: "Velocity heuristics indicate a high probability of queue strain in the next cycle.",
       horizon: "6h",
       metric: "Moderator load"
     },
     {
       id: "risk-topic",
-      level: highestVolatilityTopic.volatility > 80 ? "warning" : "info",
-      title: `Watch topic cluster: ${highestVolatilityTopic.label}`,
-      detail: `${highestVolatilityTopic.momentum}% momentum with ${highestVolatilityTopic.volatility}% volatility is distorting the community pressure model.`,
+      level: (highestVolatilityTopic.volatility || 0) > 80 ? "warning" : "info",
+      title: `Watch cluster: ${highestVolatilityTopic.label}`,
+      detail: `${highestVolatilityTopic.momentum || 0}% momentum with ${highestVolatilityTopic.volatility || 0}% volatility is impacting the community model.`,
       horizon: "24h",
       metric: "Topic volatility"
     }

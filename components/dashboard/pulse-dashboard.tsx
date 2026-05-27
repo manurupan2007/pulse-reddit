@@ -66,15 +66,51 @@ export function PulseDashboard() {
   }, [bootSequence]);
 
   const runtime = payload ?? fallback;
-  const twin = runtime.twin;
-  const outcome = runtime.outcome;
+  const twin = runtime?.twin;
+  const outcome = runtime?.outcome;
   const actions = listScenarioActions();
+
+  const primaryMetrics = useMemo(() => {
+    if (!twin?.scores) return [];
+    return [
+      {
+        label: "Resilience",
+        value: twin.scores.stability || 0,
+        tone: "accent" as const,
+        detail: "Community capability to absorb sudden report spikes."
+      },
+      {
+        label: "Tension",
+        value: twin.scores.conflictPressure || 0,
+        tone: "danger" as const,
+        detail: "Calculated probability of meta-thread escalation."
+      },
+      {
+        label: "Queue Load",
+        value: twin.scores.moderatorLoad || 0,
+        tone: "amber" as const,
+        detail: "Projected intervention demand this cycle."
+      },
+      {
+        label: "Signals",
+        value: twin.scores.communityPressure || 0,
+        tone: "cyan" as const,
+        detail: "Rolling pressure from reports and velocity."
+      },
+      {
+        label: "Quality",
+        value: twin.scores.discussionQuality || 0,
+        tone: "lime" as const,
+        detail: "Weighted substantive response metrics."
+      }
+    ];
+  }, [twin?.scores]);
 
   if (!isMounted) {
     return <div className="min-h-screen bg-[#050505]" />;
   }
 
-  if (bootSequence) {
+  if (bootSequence || !twin || !outcome) {
     return (
       <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono text-primary">
         <div className="relative w-72 h-1 bg-muted/20 overflow-hidden rounded-full mb-10 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
@@ -109,39 +145,6 @@ export function PulseDashboard() {
     { id: "intelligence", label: "Intelligence", icon: Search },
     { id: "devvit", label: "Infrastructure", icon: Terminal },
   ] as const;
-
-  const primaryMetrics = useMemo(() => [
-    {
-      label: "Resilience",
-      value: twin.scores.stability,
-      tone: "accent" as const,
-      detail: "Community capability to absorb sudden report spikes."
-    },
-    {
-      label: "Tension",
-      value: twin.scores.conflictPressure,
-      tone: "danger" as const,
-      detail: "Calculated probability of meta-thread escalation."
-    },
-    {
-      label: "Queue Load",
-      value: twin.scores.moderatorLoad,
-      tone: "amber" as const,
-      detail: "Projected intervention demand this cycle."
-    },
-    {
-      label: "Signals",
-      value: twin.scores.communityPressure,
-      tone: "cyan" as const,
-      detail: "Rolling pressure from reports and velocity."
-    },
-    {
-      label: "Quality",
-      value: twin.scores.discussionQuality,
-      tone: "lime" as const,
-      detail: "Weighted substantive response metrics."
-    }
-  ], [twin.scores]);
 
   return (
     <div className="flex h-screen bg-[#050505] overflow-hidden selection:bg-primary/30 selection:text-white antialiased">
