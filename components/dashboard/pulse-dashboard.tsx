@@ -47,6 +47,11 @@ export function PulseDashboard() {
   const [searchInput, setSearchInput] = useState("");
   const [bootSequence, setBootSequence] = useState(true);
   const [bootText, setBootText] = useState("Initializing Signal Ingestion...");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!bootSequence) return;
@@ -69,15 +74,19 @@ export function PulseDashboard() {
     }, 600);
     return () => clearInterval(interval);
   }, [bootSequence]);
+const runtime = payload ?? fallbackPayload;
+const twin = runtime.twin;
+const outcome = runtime.outcome;
+const actions = listScenarioActions();
 
-  const runtime = payload ?? fallbackPayload;
-  const twin = runtime.twin;
-  const outcome = runtime.outcome;
-  const actions = listScenarioActions();
+if (!isMounted) {
+  return <div className="min-h-screen bg-[#050505]" />;
+}
 
-  if (bootSequence) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono">
+if (bootSequence) {
+  return (
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono">
+...
         <div className="relative w-72 h-1 bg-muted/20 overflow-hidden rounded-full mb-10 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
           <div className="absolute inset-0 bg-primary animate-pulse w-full h-full" style={{ animationDuration: '1.2s' }} />
         </div>
