@@ -15,6 +15,17 @@ type OverviewPageProps = {
 };
 
 export function OverviewPage({ subreddit, twin, outcome, setView }: OverviewPageProps) {
+  if (!twin || !outcome || !twin.scores) {
+    return (
+      <div className="flex h-96 items-center justify-center border-2 border-dashed border-border/40 rounded-3xl bg-muted/5 animate-pulse">
+        <div className="text-center space-y-4">
+          <div className="text-primary text-xs font-black uppercase tracking-[0.4em]">Signal Interrupted</div>
+          <p className="text-muted-foreground text-sm font-medium">Re-establishing link to community heuristics...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700 text-foreground pb-12">
       {/* Hero Header */}

@@ -10,6 +10,17 @@ type CascadePageProps = {
 };
 
 export function CascadePage({ outcome, runtime }: CascadePageProps) {
+  if (!outcome || !runtime || !outcome.cascadeMap) {
+    return (
+      <div className="flex h-96 items-center justify-center border-2 border-dashed border-border/40 rounded-3xl bg-muted/5 animate-pulse">
+        <div className="text-center space-y-4">
+          <div className="text-red-500 text-xs font-black uppercase tracking-[0.4em]">Visualization Failure</div>
+          <p className="text-muted-foreground text-sm font-medium">Unable to project propagation clusters. Check node telemetry.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10 animate-in fade-in zoom-in-95 duration-700 h-full flex flex-col text-foreground pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-border/40 pb-10">

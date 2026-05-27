@@ -12,11 +12,19 @@ type SimulatorPanelProps = {
 };
 
 export function SimulatorPanel({
-  actions,
+  actions = [],
   state,
   onToggle,
   outcome
 }: SimulatorPanelProps) {
+  if (!actions || actions.length === 0) {
+    return (
+      <div className="flex h-48 items-center justify-center border border-border/40 rounded-2xl bg-muted/5 animate-pulse">
+        <div className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Lab Offline</div>
+      </div>
+    );
+  }
+
   const stats = [
     {
       label: "Engagement",

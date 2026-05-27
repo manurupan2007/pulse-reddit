@@ -18,7 +18,7 @@ type StoryModePanelProps = {
 };
 
 export const StoryModePanel = memo(function StoryModePanel({
-  steps,
+  steps = [],
   storyIndex,
   experienceMode,
   autoplay,
@@ -28,7 +28,15 @@ export const StoryModePanel = memo(function StoryModePanel({
   stepForward,
   stepBackward
 }: StoryModePanelProps) {
-  const activeStep = steps[storyIndex] ?? steps[0];
+  const activeStep = steps?.[storyIndex] ?? steps?.[0] ?? { title: "Initializing Beat...", body: "Synchronizing narrative state with community heuristics." };
+
+  if (!steps || steps.length === 0) {
+    return (
+      <div className="flex h-48 items-center justify-center border border-border/40 rounded-2xl bg-muted/5 animate-pulse">
+        <div className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Narrative Stream Offline</div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6 xl:grid-cols-2">
