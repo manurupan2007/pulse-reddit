@@ -9,7 +9,6 @@ export type CommunityPersonality =
 
 export type DataMode = "simulated" | "live";
 
-export type ExperienceMode = "operator" | "story";
 
 export type DashboardView = 
   | "overview" 
@@ -17,7 +16,6 @@ export type DashboardView =
   | "simulation" 
   | "cascade" 
   | "intelligence" 
-  | "story" 
   | "devvit";
 
 export type HorizonLabel = "6h" | "24h" | "3d";

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Cpu, Globe, Radar, Search, Terminal, ShieldAlert, BarChart3, AlertTriangle, Activity, PlayCircle, RefreshCw, Zap } from "lucide-react";
+import { Activity, AlertTriangle, BarChart3, Cpu, Globe, Radar, RefreshCw, Search, Terminal, Wifi, WifiOff, Zap } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 
 import { usePulseRuntime } from "@/hooks/use-pulse-runtime";
@@ -11,7 +11,6 @@ import { OperationsPage } from "./views/operations-view";
 import { SimulationPage } from "./views/simulation-view";
 import { CascadePage } from "./views/cascade-view";
 import { IntelligencePage } from "./views/intelligence-view";
-import { StoryPage } from "./views/story-view";
 import { DevvitPage } from "./views/devvit-view";
 
 const fallbackPayload = buildRuntimePayload();
@@ -22,26 +21,16 @@ export function PulseDashboard() {
     loading,
     error,
     mode,
-    experienceMode,
     view,
-    autoplay,
     subreddit,
-    storyIndex,
     presetOptions,
     setMode,
-    setExperienceMode,
-    setAutoplay,
     setSubreddit,
     toggleAction,
     resetScenario,
-    jumpToStory,
-    soundCue,
     transport,
-    stepForward,
-    stepBackward,
-    setPlaybackSpeed,
-    playbackSpeed,
-    setView
+    setView,
+    refreshData
   } = usePulseRuntime();
 
   const [searchInput, setSearchInput] = useState("");
@@ -94,38 +83,12 @@ export function PulseDashboard() {
     setSubreddit(name);
   };
 
-  const primaryMetrics = useMemo(() => [
-    {
-      label: "Resilience",
-      value: twin.scores.stability,
-      tone: "accent" as const,
-      detail: "Community capability to absorb sudden report spikes."
-    },
-    {
-      label: "Tension",
-      value: twin.scores.conflictPressure,
-      tone: "danger" as const,
-      detail: "Calculated probability of meta-thread escalation."
-    },
-    {
-      label: "Queue Load",
-      value: twin.scores.moderatorLoad,
-      tone: "amber" as const,
-      detail: "Projected intervention demand this cycle."
-    },
-    {
-      label: "Signals",
-      value: twin.scores.communityPressure,
-      tone: "cyan" as const,
-      detail: "Rolling pressure from reports and velocity."
-    },
-    {
-      label: "Quality",
-      value: twin.scores.discussionQuality,
-      tone: "lime" as const,
-      detail: "Weighted substantive response metrics."
+  const handleSearchSubmit = () => {
+    if (searchInput.trim()) {
+      handleSetSubreddit(searchInput.trim());
+      setSearchInput("");
     }
-  ], [twin.scores]);
+  };
 
   const navItems = useMemo(() => [
     { id: "overview", label: "Dashboard", icon: Radar },
@@ -133,7 +96,6 @@ export function PulseDashboard() {
     { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
     { id: "cascade", label: "Propagation", icon: Globe },
     { id: "intelligence", label: "Intelligence", icon: Search },
-    { id: "story", label: "Demo Mode", icon: PlayCircle },
     { id: "devvit", label: "Infrastructure", icon: Terminal },
   ] as const, []);
 
@@ -177,18 +139,38 @@ export function PulseDashboard() {
           })}
         </nav>
 
-        <div className="p-8 border-t border-border/40 bg-card/5 space-y-8">
-           <div className="hidden md:block">
-             <HealthCard twin={twin} />
-           </div>
-           <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-4">
-                <div className={`h-2 w-2 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.2)] ${mode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-700'}`} />
-                <div className="hidden md:block text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
-                  {mode === "live" ? "System Active" : "Offline Simulation"}
-                </div>
-              </div>
-           </div>
+        <div className="p-8 border-t border-border/40 bg-card/5 space-y-6">
+          {/* Live / Simulated Toggle Button */}
+          <button
+            onClick={() => setMode(mode === "live" ? "simulated" : "live")}
+            className={`hidden md:flex w-full items-center justify-center gap-3 px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 border ${
+              mode === "live"
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                : "bg-muted/10 text-muted-foreground/60 border-border/40 hover:bg-muted/20 hover:text-foreground"
+            }`}
+          >
+            {mode === "live" ? (
+              <>
+                <Wifi className="h-4 w-4 animate-pulse" />
+                <span>Live Mode Active</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="h-4 w-4" />
+                <span>Go Live</span>
+              </>
+            )}
+          </button>
+
+          {/* Health indicator */}
+          <div className="hidden md:block">
+            <HealthCard twin={twin} />
+          </div>
+
+          {/* Status dot for collapsed sidebar */}
+          <div className="flex items-center justify-center md:hidden">
+            <div className={`h-2.5 w-2.5 rounded-full ${mode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-700'}`} />
+          </div>
         </div>
       </aside>
 
@@ -197,55 +179,79 @@ export function PulseDashboard() {
         {/* Header Strip */}
         <header className="h-24 border-b border-border/40 bg-card/10 backdrop-blur-2xl flex items-center justify-between px-12 shrink-0 relative z-40">
           <div className="flex items-center flex-1 max-w-2xl">
-             <div className="relative w-full group text-foreground">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors opacity-40" />
-                <input
-                  type="text"
-                  placeholder="Query community node..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSetSubreddit(searchInput)}
-                  className="w-full bg-muted/10 border border-border/40 rounded-2xl pl-12 pr-4 py-4 text-sm font-medium tracking-tight placeholder:text-muted-foreground/30 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:bg-background/40 transition-all shadow-inner"
-                />
-              </div>
+            <div className="relative w-full group text-foreground">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors opacity-40" />
+              <input
+                type="text"
+                placeholder="Query community node (e.g. r/gaming)..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
+                className="w-full bg-muted/10 border border-border/40 rounded-2xl pl-12 pr-32 py-4 text-sm font-medium tracking-tight placeholder:text-muted-foreground/30 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:bg-background/40 transition-all shadow-inner"
+              />
+              {searchInput && (
+                <button
+                  onClick={handleSearchSubmit}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                >
+                  Load
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4 ml-auto">
-            {/* Quick Command Center */}
-            <div className="hidden xl:flex items-center gap-2 bg-muted/10 p-1 rounded-2xl border border-border/40 mr-6">
-              <button
-                onClick={() => setMode(mode === "live" ? "simulated" : "live")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  mode === "live" 
-                    ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
-                    : "text-muted-foreground/60 hover:text-foreground"
-                }`}
-              >
-                <div className={`h-1.5 w-1.5 rounded-full ${mode === "live" ? "bg-white animate-pulse" : "bg-zinc-600"}`} />
-                Live Node
-              </button>
-              <button
-                onClick={() => setExperienceMode(experienceMode === "story" ? "operator" : "story")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  experienceMode === "story" 
-                    ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.3)]" 
-                    : "text-muted-foreground/60 hover:text-foreground"
-                }`}
-              >
-                <PlayCircle className="h-3 w-3" />
-                Guided
-              </button>
+            {/* Control Button Bar */}
+            <div className="hidden xl:flex items-center gap-2 bg-muted/10 p-1.5 rounded-2xl border border-border/40">
+
+              {/* Subreddit Preset Switcher */}
+              <div className="hidden xl:flex items-center gap-1 px-2">
+                {presetOptions.slice(0, 4).map((option, index) => (
+                  <button
+                    key={option.subreddit}
+                    onClick={() => handleSetSubreddit(option.subreddit)}
+                    title={option.subreddit}
+                    className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all ${
+                      subreddit === option.subreddit
+                        ? "bg-primary/20 text-primary border border-primary/30"
+                        : "text-muted-foreground/50 hover:text-foreground hover:bg-muted/30"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <div className="h-5 w-px bg-border/40 mx-1" />
+              </div>
+
+              {/* Reset Scenario Button */}
               <button
                 onClick={resetScenario}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all"
+                title="Reset active scenario simulation"
               >
-                <Zap className="h-3 w-3" />
-                Halt
+                <Zap className="h-3.5 w-3.5" />
+                Reset
+              </button>
+
+              {/* Refresh Data Button */}
+              <button
+                onClick={refreshData}
+                disabled={loading}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  loading
+                    ? "text-muted-foreground/30 cursor-not-allowed"
+                    : "text-muted-foreground/60 hover:text-primary hover:bg-primary/10"
+                }`}
+                title="Refresh data from engine"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                {loading ? "Syncing..." : "Refresh"}
               </button>
             </div>
 
+            {/* Subreddit Selector */}
             <div className="flex flex-col items-end gap-1.5 px-4 border-r border-border/40 mr-2">
-              <div className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 leading-none">Target</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 leading-none">Target Node</div>
               <select
                 value={subreddit}
                 onChange={(e) => handleSetSubreddit(e.target.value)}
@@ -259,23 +265,29 @@ export function PulseDashboard() {
               </select>
             </div>
 
-            <div className="h-10 w-[1px] bg-border/40" />
-
-            <button 
-              onClick={() => window.location.reload()}
-              className="p-3 rounded-xl bg-muted/20 border border-border/40 text-muted-foreground/60 hover:text-primary hover:border-primary/40 transition-all active:rotate-180 duration-500"
+            {/* Live Mode Toggle Button */}
+            <button
+              onClick={() => setMode(mode === "live" ? "simulated" : "live")}
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 border ${
+                mode === "live"
+                  ? "bg-emerald-500 text-white border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                  : "bg-muted/20 text-muted-foreground/70 border-border/40 hover:bg-muted/30 hover:text-foreground"
+              }`}
+              title={mode === "live" ? "Switch to simulated mode" : "Switch to live mode"}
             >
-               <RefreshCw className="h-4 w-4" />
+              <div className={`h-2 w-2 rounded-full ${mode === "live" ? "bg-white animate-pulse" : "bg-zinc-600"}`} />
+              {mode === "live" ? "Live" : "Simulated"}
             </button>
 
+            {/* System stats chip */}
             <div className="hidden lg:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 bg-muted/10 px-8 py-3 rounded-2xl border border-border/40 shadow-sm">
               <div className="flex items-center gap-3 border-r border-border/40 pr-8">
                 <Cpu className="h-3.5 w-3.5 text-primary opacity-40" />
                 <span className="font-mono">12ms</span>
               </div>
               <div className="flex items-center gap-3">
-                <Globe className="h-3.5 w-3.5 text-sky-500 opacity-40" />
-                <span className="font-mono">Heuristic v2.4</span>
+                <div className={`h-2 w-2 rounded-full ${transport === "stream" ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
+                <span className="font-mono capitalize">{transport}</span>
               </div>
             </div>
           </div>
@@ -283,48 +295,31 @@ export function PulseDashboard() {
 
         {/* Dynamic View Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-12 md:p-16 scroll-smooth">
-           <div className="mx-auto max-w-[1500px]">
-              {view === "overview" && (
-                <OverviewPage subreddit={subreddit} twin={twin} outcome={outcome} setView={setView} />
-              )}
+          <div className="mx-auto max-w-[1500px]">
+            {view === "overview" && (
+              <OverviewPage subreddit={subreddit} twin={twin} outcome={outcome} setView={setView} />
+            )}
 
-              {view === "operations" && (
-                <OperationsPage twin={twin} />
-              )}
+            {view === "operations" && (
+              <OperationsPage twin={twin} />
+            )}
 
-              {view === "simulation" && (
-                <SimulationPage runtime={runtime} twin={twin} outcome={outcome} actions={actions} toggleAction={toggleAction} resetScenario={resetScenario} />
-              )}
+            {view === "simulation" && (
+              <SimulationPage runtime={runtime} twin={twin} outcome={outcome} actions={actions} toggleAction={toggleAction} resetScenario={resetScenario} />
+            )}
 
-              {view === "cascade" && (
-                <CascadePage outcome={outcome} runtime={runtime} />
-              )}
+            {view === "cascade" && (
+              <CascadePage outcome={outcome} runtime={runtime} />
+            )}
 
-              {view === "intelligence" && (
-                <IntelligencePage twin={twin} />
-              )}
+            {view === "intelligence" && (
+              <IntelligencePage twin={twin} />
+            )}
 
-              {view === "story" && (
-                <StoryPage 
-                  twin={twin} 
-                  storyIndex={storyIndex} 
-                  experienceMode={experienceMode} 
-                  autoplay={autoplay} 
-                  jumpToStory={jumpToStory} 
-                  setAutoplay={setAutoplay} 
-                  setExperienceMode={setExperienceMode} 
-                  stepForward={stepForward} 
-                  stepBackward={stepBackward} 
-                  playbackSpeed={playbackSpeed} 
-                  setPlaybackSpeed={setPlaybackSpeed}
-                  primaryMetrics={primaryMetrics}
-                />
-              )}
-
-              {view === "devvit" && (
-                <DevvitPage twin={twin} workflows={twin.workflows} events={twin.events} />
-              )}
-           </div>
+            {view === "devvit" && (
+              <DevvitPage twin={twin} workflows={twin.workflows} events={twin.events} />
+            )}
+          </div>
         </div>
 
         {/* Footer Bar */}
@@ -337,11 +332,11 @@ export function PulseDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 group">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 group-hover:animate-ping transition-all"></div>
-              Nodes Synchronized
+            <div className={`flex items-center gap-2 group ${mode === "live" ? "text-emerald-400" : ""}`}>
+              <div className={`h-1.5 w-1.5 rounded-full ${mode === "live" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700"}`}></div>
+              {mode === "live" ? "Live Stream" : "Simulated"}
             </div>
-            <span className="opacity-40 hover:opacity-100 transition-opacity">Transport: {transport}</span>
+            <span className="opacity-40">Transport: {transport}</span>
           </div>
         </footer>
       </main>
@@ -388,10 +383,9 @@ function HealthCard({ twin }: { twin: any }) {
         </div>
         <div className="min-w-0 space-y-0.5">
           <div className="text-[13px] font-black truncate leading-tight group-hover:text-primary transition-colors">{twin.subreddit}</div>
-          <div className="text-[9px] text-muted-foreground/60 uppercase tracking-[0.2em] font-black leading-none">Security Index</div>
+          <div className="text-[9px] text-muted-foreground/60 uppercase tracking-[0.2em] font-black leading-none">Health Index</div>
         </div>
       </div>
-      {/* Subtle Background Glow */}
       <div className="absolute inset-0 bg-primary/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
     </div>
   );
