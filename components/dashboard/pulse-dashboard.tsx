@@ -11,7 +11,6 @@ import { OperationsPage } from "./views/operations-view";
 import { SimulationPage } from "./views/simulation-view";
 import { CascadePage } from "./views/cascade-view";
 import { IntelligencePage } from "./views/intelligence-view";
-import { StoryPage } from "./views/story-view";
 import { DevvitPage } from "./views/devvit-view";
 
 export function PulseDashboard() {
@@ -20,24 +19,14 @@ export function PulseDashboard() {
     loading,
     error,
     mode,
-    experienceMode,
     view,
-    autoplay,
     subreddit,
-    storyIndex,
     presetOptions,
     setMode,
-    setExperienceMode,
-    setAutoplay,
     setSubreddit,
     toggleAction,
     resetScenario,
-    jumpToStory,
     transport,
-    stepForward,
-    stepBackward,
-    setPlaybackSpeed,
-    playbackSpeed,
     setView,
     refreshData
   } = usePulseRuntime();
@@ -118,11 +107,10 @@ export function PulseDashboard() {
     { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
     { id: "cascade", label: "Propagation", icon: Globe },
     { id: "intelligence", label: "Intelligence", icon: Search },
-    { id: "story", label: "Demo Mode", icon: PlayCircle },
     { id: "devvit", label: "Infrastructure", icon: Terminal },
   ] as const;
 
-  const primaryMetrics = [
+  const primaryMetrics = useMemo(() => [
     {
       label: "Resilience",
       value: twin.scores.stability,
@@ -153,7 +141,7 @@ export function PulseDashboard() {
       tone: "lime" as const,
       detail: "Weighted substantive response metrics."
     }
-  ];
+  ], [twin.scores]);
 
   return (
     <div className="flex h-screen bg-[#050505] overflow-hidden selection:bg-primary/30 selection:text-white antialiased">
@@ -251,17 +239,6 @@ export function PulseDashboard() {
                 {mode === "live" ? "Live Node" : "Go Live"}
               </button>
               <button
-                onClick={() => setExperienceMode(experienceMode === "story" ? "operator" : "story")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  experienceMode === "story" 
-                    ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.3)] border-primary/50" 
-                    : "text-muted-foreground/60 hover:text-foreground border-transparent"
-                } border`}
-              >
-                <PlayCircle className="h-3.5 w-3.5" />
-                {experienceMode === "story" ? "Guided Mode" : "Demo Mode"}
-              </button>
-              <button
                 onClick={resetScenario}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
               >
@@ -336,23 +313,6 @@ export function PulseDashboard() {
 
               {view === "intelligence" && (
                 <IntelligencePage twin={twin} />
-              )}
-
-              {view === "story" && (
-                <StoryPage 
-                  twin={twin} 
-                  storyIndex={storyIndex} 
-                  experienceMode={experienceMode} 
-                  autoplay={autoplay} 
-                  jumpToStory={jumpToStory} 
-                  setAutoplay={setAutoplay} 
-                  setExperienceMode={setExperienceMode} 
-                  stepForward={stepForward} 
-                  stepBackward={stepBackward} 
-                  playbackSpeed={playbackSpeed} 
-                  setPlaybackSpeed={setPlaybackSpeed}
-                  primaryMetrics={primaryMetrics}
-                />
               )}
 
               {view === "devvit" && (

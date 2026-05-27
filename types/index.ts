@@ -9,16 +9,12 @@ export type CommunityPersonality =
 
 export type DataMode = "simulated" | "live";
 
-export type ExperienceMode = "operator" | "story";
-
-
 export type DashboardView = 
   | "overview" 
   | "operations" 
   | "simulation" 
   | "cascade" 
   | "intelligence" 
-  | "story" 
   | "devvit";
 
 export type HorizonLabel = "6h" | "24h" | "3d";
@@ -253,14 +249,6 @@ export type ExecutiveMetric = {
   detail: string;
 };
 
-export type StoryStep = {
-  id: string;
-  title: string;
-  body: string;
-  actionPreset: Partial<ScenarioState>;
-  focus: "alerts" | "timeline" | "simulator" | "cascade" | "executive";
-};
-
 export type CommunityTwin = {
   subreddit: string;
   tagline: string;
@@ -284,7 +272,6 @@ export type CommunityTwin = {
   executiveMetrics: ExecutiveMetric[];
   todayRisks: Alert[];
   cascadeMap: ConflictCascadeMap;
-  storySteps: StoryStep[];
 };
 
 export type PulseRuntimePayload = {

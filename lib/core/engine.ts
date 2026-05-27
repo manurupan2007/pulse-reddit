@@ -32,7 +32,6 @@ import {
   ScenarioConfidence,
   ScenarioOutcome,
   ScenarioState,
-  StoryStep,
   TopicCluster
 } from "@/types";
 
@@ -61,7 +60,6 @@ type TwinPreset = {
     tags: string[];
     delta: Partial<CommunitySignal>;
   }>;
-  storySteps: StoryStep[];
 };
 
 type BuildTwinOptions = {
@@ -180,23 +178,6 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
     { id: "appeals", label: "Meta Response", status: "watch", queueDepth: getVal(42, 5, 100), etaMinutes: getVal(43, 10, 60), owner: "u/sys-mod" }
   ];
 
-  const storySteps: StoryStep[] = [
-    {
-      id: "proc-1",
-      title: "Model Initialization",
-      body: `Pulse has ingested active signals for r/${normalized}. The community exhibits a ${signals.topicVolatility > 60 ? "high-volatility" : "stable engagement"} pattern. ${isPolitics ? "Political friction vectors are active." : "Standard behavioral loops are nominal."}`,
-      actionPreset: {},
-      focus: "executive"
-    },
-    {
-      id: "proc-2",
-      title: "Propagation Vectors",
-      body: `Heuristics suggest tension is ${signals.crossThreadPropagation > 50 ? "diffusing" : "contained"} across primary clusters. Analysis recommends ${signals.commentAcceleration > 60 ? "intervention friction" : "standard monitoring"}.`,
-      actionPreset: { slowMode: signals.commentAcceleration > 70 },
-      focus: "cascade"
-    }
-  ];
-
   return {
     subreddit: `r/${normalized}`,
     tagline: isPolitics ? "News-cycle combustion chamber" : (isMeme ? "Entertainment meta-cluster" : (isSupport ? "Peer-to-peer response hub" : "Dynamic community node")),
@@ -219,8 +200,7 @@ export function generateProceduralPreset(subredditName: string): TwinPreset {
         tags: ["signals", "drift"],
         delta: { reports: 5, commentAcceleration: 4 }
       }
-    ],
-    storySteps
+    ]
   };
 }
 
@@ -372,29 +352,6 @@ const presets: TwinPreset[] = [
         tags: ["velocity", "news"],
         delta: { postingVelocity: 6, controversyEmergence: 5, politicalHeat: 4 }
       }
-    ],
-    storySteps: [
-      {
-        id: "story-1",
-        title: "Pressure builds around a live political flashpoint",
-        body: "Pulse spots reply-chain intensity and report acceleration rising together before moderators are overwhelmed.",
-        actionPreset: {},
-        focus: "executive"
-      },
-      {
-        id: "story-2",
-        title: "Moderators stage a containment package",
-        body: "Enable slow mode, tighten automod, and restrict politics to isolate the spread without freezing the whole subreddit.",
-        actionPreset: { slowMode: true, tightenAutomod: true, restrictPolitics: true },
-        focus: "simulator"
-      },
-      {
-        id: "story-3",
-        title: "Conflict cascade collapses downstream",
-        body: "The cascade view shows how propagation drops across sister threads once intervention friction is applied consistently.",
-        actionPreset: { slowMode: true, tightenAutomod: true, restrictPolitics: true, temporaryTopicBan: true },
-        focus: "cascade"
-      }
     ]
   },
   {
@@ -470,22 +427,6 @@ const presets: TwinPreset[] = [
         tags: ["depth", "quality"],
         delta: { engagementDepth: -5, sentimentVolatility: 3, churnRisk: 2 }
       }
-    ],
-    storySteps: [
-      {
-        id: "story-1",
-        title: "Engagement stays high but quality erodes",
-        body: "Pulse shows how meme dominance can quietly flatten discussion quality even inside a positive community.",
-        actionPreset: {},
-        focus: "timeline"
-      },
-      {
-        id: "story-2",
-        title: "Moderators limit media posts",
-        body: "A light-touch change can recover discussion depth without triggering harsh backlash.",
-        actionPreset: { limitMediaPosts: true, tightenAutomod: true },
-        focus: "simulator"
-      }
     ]
   },
   {
@@ -549,15 +490,6 @@ const presets: TwinPreset[] = [
         tags: ["media", "meme"],
         delta: { memeSaturation: 6, engagementDepth: -4, postingVelocity: 4 }
       }
-    ],
-    storySteps: [
-      {
-        id: "story-1",
-        title: "A culture war leaks across multiple threads",
-        body: "Pulse traces how one high-energy rivalry starts polluting unrelated discussions.",
-        actionPreset: {},
-        focus: "cascade"
-      }
     ]
   },
   {
@@ -620,15 +552,6 @@ const presets: TwinPreset[] = [
         weight: 8,
         tags: ["reply-chain", "engagement"],
         delta: { replyChainIntensity: 6, topicVolatility: 4, sentimentVolatility: 4 }
-      }
-    ],
-    storySteps: [
-      {
-        id: "story-1",
-        title: "Velocity becomes the moderation problem",
-        body: "Pulse reframes moderation load as a timing issue, not just a toxicity issue, in giant general-interest communities.",
-        actionPreset: { raiseKarma: true, tightenAutomod: true },
-        focus: "executive"
       }
     ]
   }
@@ -1210,8 +1133,7 @@ function buildTwinCore(options: BuildTwinOptions): CommunityTwin {
     devvit: buildDevvitStatus(mode, tick),
     executiveMetrics: buildExecutiveMetrics(scores),
     todayRisks: alerts.slice(0, 3),
-    cascadeMap: buildCascadeMap(signals),
-    storySteps: preset.storySteps
+    cascadeMap: buildCascadeMap(signals)
   };
 }
 
@@ -1508,11 +1430,6 @@ export function buildRuntimePayload(options?: SimulateOptions): PulseRuntimePayl
   
   const outcome = simulateScenarioCore(twin.signals, scenario);
 
-  const steps = twin?.storySteps || [];
-  const focusedStep = steps.find((step) =>
-    step && step.actionPreset && Object.keys(step.actionPreset).some((key) => scenario[key as ActionKey])
-  );
-
   return {
     twin: {
       ...twin,
@@ -1521,9 +1438,6 @@ export function buildRuntimePayload(options?: SimulateOptions): PulseRuntimePayl
     },
     outcome,
     scenario,
-    autoplaySuggestedAction: focusedStep
-      ? orderedActionKeys.find((key) => !scenario[key] && focusedStep.actionPreset[key])
-          ?? null
-      : null
+    autoplaySuggestedAction: null
   };
 }

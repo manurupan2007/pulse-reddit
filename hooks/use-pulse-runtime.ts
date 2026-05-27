@@ -3,24 +3,20 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { defaultScenarioState, listPresetSubreddits } from "@/lib/core/engine";
-import { ActionKey, DataMode, ExperienceMode, PulseRuntimePayload, ScenarioState, DashboardView } from "@/types";
+import { ActionKey, DataMode, PulseRuntimePayload, ScenarioState, DashboardView } from "@/types";
 
 type RuntimeState = {
   payload: PulseRuntimePayload | null;
   loading: boolean;
   error: string | null;
   mode: DataMode;
-  experienceMode: ExperienceMode;
   view: DashboardView;
-  autoplay: boolean;
   tick: number;
   visualTick: number;
   subreddit: string;
   scenario: ScenarioState;
-  storyIndex: number;
   soundCue: string | null;
   transport: "polling" | "stream";
-  playbackSpeed: number;
 };
 
 async function fetchRuntimePayload(
@@ -54,17 +50,13 @@ export function usePulseRuntime() {
     loading: true,
     error: null,
     mode: "simulated",
-    experienceMode: "operator",
     view: "overview",
-    autoplay: false,
     tick: 0,
     visualTick: 0,
     subreddit: presetOptions[0].subreddit,
     scenario: defaultScenarioState,
-    storyIndex: 0,
     soundCue: null,
-    transport: "polling",
-    playbackSpeed: 1
+    transport: "polling"
   });
 
   // Visual jitter interval
@@ -98,9 +90,7 @@ export function usePulseRuntime() {
           soundCue:
             payload.twin.events[0]?.severity === "high"
               ? "risk-spike"
-              : payload.autoplaySuggestedAction
-                ? "story-advance"
-                : "ambient"
+              : "ambient"
         }));
       })
       .catch((error) => {
@@ -126,7 +116,7 @@ export function usePulseRuntime() {
       return;
     }
 
-    const intervalMs = (state.autoplay ? 6000 : 10000) / state.playbackSpeed;
+    const intervalMs = 10000;
     const interval = window.setInterval(() => {
       startTransition(() => {
         setState((current) => ({
@@ -138,7 +128,7 @@ export function usePulseRuntime() {
     }, intervalMs);
 
     return () => window.clearInterval(interval);
-  }, [state.mode, state.autoplay, state.playbackSpeed]);
+  }, [state.mode]);
 
   // Live stream SSE
   useEffect(() => {
@@ -194,40 +184,6 @@ export function usePulseRuntime() {
     };
   }, [state.mode, state.subreddit]);
 
-  // Autoplay progression
-  useEffect(() => {
-    if (!state.autoplay || state.experienceMode !== "story" || !state.payload) {
-      return;
-    }
-
-    const steps = state.payload.twin.storySteps;
-    if (steps.length === 0) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      startTransition(() => {
-        setState((current) => {
-          const nextIndex = (current.storyIndex + 1) % steps.length;
-          const nextPreset = steps[nextIndex]?.actionPreset ?? {};
-
-          return {
-            ...current,
-            storyIndex: nextIndex,
-            scenario: {
-              ...defaultScenarioState,
-              ...nextPreset
-            },
-            tick: current.tick + 1,
-            soundCue: "story-advance"
-          };
-        });
-      });
-    }, 8000 / state.playbackSpeed);
-
-    return () => window.clearInterval(interval);
-  }, [state.autoplay, state.experienceMode, state.payload, state.playbackSpeed]);
-
   function setMode(mode: DataMode) {
     startTransition(() => {
         setState((current) => ({
@@ -239,26 +195,6 @@ export function usePulseRuntime() {
     });
   }
 
-  function setExperienceMode(experienceMode: ExperienceMode) {
-    startTransition(() => {
-      setState((current) => ({
-        ...current,
-        experienceMode,
-        autoplay: experienceMode === "story" ? current.autoplay : false
-      }));
-    });
-  }
-
-  function setAutoplay(autoplay: boolean) {
-    startTransition(() => {
-      setState((current) => ({
-        ...current,
-        autoplay,
-        experienceMode: autoplay ? "story" : current.experienceMode
-      }));
-    });
-  }
-
   function setSubreddit(subreddit: string) {
     const name = subreddit.startsWith("r/") ? subreddit : `r/${subreddit}`;
     startTransition(() => {
@@ -266,7 +202,6 @@ export function usePulseRuntime() {
         ...current,
         subreddit: name,
         tick: 0,
-        storyIndex: 0,
         scenario: defaultScenarioState
       }));
     });
@@ -279,9 +214,7 @@ export function usePulseRuntime() {
         scenario: {
           ...current.scenario,
           [key]: !current.scenario[key]
-        },
-        experienceMode: "operator",
-        autoplay: false
+        }
       }));
     });
   }
@@ -290,29 +223,7 @@ export function usePulseRuntime() {
     startTransition(() => {
       setState((current) => ({
         ...current,
-        scenario: defaultScenarioState,
-        storyIndex: 0,
-        autoplay: false
-      }));
-    });
-  }
-
-  function jumpToStory(index: number) {
-    const step = state.payload?.twin.storySteps[index];
-    if (!step) {
-      return;
-    }
-
-    startTransition(() => {
-      setState((current) => ({
-        ...current,
-        storyIndex: index,
-        experienceMode: "story",
-        view: "story",
-        scenario: {
-          ...defaultScenarioState,
-          ...step.actionPreset
-        }
+        scenario: defaultScenarioState
       }));
     });
   }
@@ -332,38 +243,14 @@ export function usePulseRuntime() {
     });
   }
 
-  function stepForward() {
-    if (!state.payload) return;
-    const steps = state.payload.twin.storySteps;
-    const nextIndex = (state.storyIndex + 1) % steps.length;
-    jumpToStory(nextIndex);
-  }
-
-  function stepBackward() {
-    if (!state.payload) return;
-    const steps = state.payload.twin.storySteps;
-    const nextIndex = (state.storyIndex - 1 + steps.length) % steps.length;
-    jumpToStory(nextIndex);
-  }
-
-  function setPlaybackSpeed(speed: number) {
-    setState((current) => ({ ...current, playbackSpeed: speed }));
-  }
-
   return {
     ...state,
     presetOptions,
     setMode,
-    setExperienceMode,
-    setAutoplay,
     setSubreddit,
     toggleAction,
     resetScenario,
-    jumpToStory,
     setView,
-    refreshData,
-    stepForward,
-    stepBackward,
-    setPlaybackSpeed
+    refreshData
   };
 }
