@@ -14,8 +14,6 @@ import { IntelligencePage } from "./views/intelligence-view";
 import { StoryPage } from "./views/story-view";
 import { DevvitPage } from "./views/devvit-view";
 
-const fallbackPayload = buildRuntimePayload();
-
 export function PulseDashboard() {
   const {
     payload,
@@ -43,6 +41,9 @@ export function PulseDashboard() {
     setView,
     refreshData
   } = usePulseRuntime();
+
+  // Lazy-load fallback payload to avoid module-scope execution errors
+  const fallback = useMemo(() => buildRuntimePayload(), []);
 
   const [searchInput, setSearchInput] = useState("");
   const [bootSequence, setBootSequence] = useState(true);
@@ -74,19 +75,19 @@ export function PulseDashboard() {
     }, 600);
     return () => clearInterval(interval);
   }, [bootSequence]);
-const runtime = payload ?? fallbackPayload;
-const twin = runtime.twin;
-const outcome = runtime.outcome;
-const actions = listScenarioActions();
 
-if (!isMounted) {
-  return <div className="min-h-screen bg-[#050505]" />;
-}
+  const runtime = payload ?? fallback;
+  const twin = runtime.twin;
+  const outcome = runtime.outcome;
+  const actions = listScenarioActions();
 
-if (bootSequence) {
-  return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono">
-...
+  if (!isMounted) {
+    return <div className="min-h-screen bg-[#050505]" />;
+  }
+
+  if (bootSequence) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-mono text-primary">
         <div className="relative w-72 h-1 bg-muted/20 overflow-hidden rounded-full mb-10 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
           <div className="absolute inset-0 bg-primary animate-pulse w-full h-full" style={{ animationDuration: '1.2s' }} />
         </div>
@@ -111,7 +112,7 @@ if (bootSequence) {
     }
   };
 
-  const navItems = useMemo(() => [
+  const navItems = [
     { id: "overview", label: "Dashboard", icon: Radar },
     { id: "operations", label: "Live Ops", icon: Activity },
     { id: "simulation", label: "Scenario Lab", icon: BarChart3 },
@@ -119,9 +120,9 @@ if (bootSequence) {
     { id: "intelligence", label: "Intelligence", icon: Search },
     { id: "story", label: "Demo Mode", icon: PlayCircle },
     { id: "devvit", label: "Infrastructure", icon: Terminal },
-  ] as const, []);
+  ] as const;
 
-  const primaryMetrics = useMemo(() => [
+  const primaryMetrics = [
     {
       label: "Resilience",
       value: twin.scores.stability,
@@ -152,7 +153,7 @@ if (bootSequence) {
       tone: "lime" as const,
       detail: "Weighted substantive response metrics."
     }
-  ], [twin.scores]);
+  ];
 
   return (
     <div className="flex h-screen bg-[#050505] overflow-hidden selection:bg-primary/30 selection:text-white antialiased">
@@ -292,8 +293,17 @@ if (bootSequence) {
               </select>
             </div>
 
-            <div className="hidden lg:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 bg-muted/10 px-8 py-3 rounded-2xl border border-border/40">
-              <div className="flex items-center gap-3 border-r border-border/40 pr-8">
+            <div className="h-10 w-[1px] bg-border/40" />
+
+            <button 
+              onClick={() => window.location.reload()}
+              className="p-3 rounded-xl bg-muted/20 border border-border/40 text-muted-foreground/60 hover:text-primary hover:border-primary/40 transition-all active:rotate-180 duration-500"
+            >
+               <RefreshCw className="h-4 w-4" />
+            </button>
+
+            <div className="hidden lg:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 bg-muted/10 px-8 py-3 rounded-2xl border border-border/40 shadow-sm">
+              <div className="flex items-center gap-3 border-r border-border/60 pr-8">
                 <Cpu className="h-3.5 w-3.5 text-primary opacity-40" />
                 <span className="font-mono">12ms</span>
               </div>
@@ -365,7 +375,7 @@ if (bootSequence) {
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 group-hover:animate-ping transition-all"></div>
               Nodes Synchronized
             </div>
-            <span className="opacity-40 hover:opacity-100 transition-opacity">Transport: {transport}</span>
+            <span className="opacity-40 hover:opacity-100 transition-opacity text-[10px]">Transport: {transport}</span>
           </div>
         </footer>
       </main>
@@ -389,8 +399,8 @@ if (bootSequence) {
 
 function HealthCard({ twin }: { twin: any }) {
   return (
-    <div className="p-5 rounded-2xl border border-border/40 bg-card/40 relative overflow-hidden group shadow-inner">
-      <div className="flex items-center gap-4 text-foreground relative z-10">
+    <div className="p-5 rounded-2xl border border-border/40 bg-card/40 relative overflow-hidden group shadow-inner text-foreground">
+      <div className="flex items-center gap-4 relative z-10">
         <div className="relative h-12 w-12 shrink-0 group-hover:scale-105 transition-transform duration-500">
           <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
             <circle className="stroke-muted/10" strokeWidth="14" fill="transparent" r="40" cx="50" cy="50" />
