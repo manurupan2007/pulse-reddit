@@ -205,23 +205,23 @@ export function PulseDashboard() {
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Header Strip */}
         <header className="h-24 border-b border-border/40 bg-card/10 backdrop-blur-2xl flex items-center justify-between px-12 shrink-0 relative z-40">
-          <div className="flex items-center flex-1 max-w-2xl">
+          <div className="flex items-center flex-1 max-w-xl mx-8">
              <div className="relative w-full group text-foreground">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors opacity-40" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary transition-colors opacity-80" />
                 <input
                   type="text"
-                  placeholder="Query community node..."
+                  placeholder="Analyze any subreddit (e.g. r/gaming)..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
-                  className="w-full bg-muted/10 border border-border/40 rounded-2xl pl-12 pr-32 py-4 text-sm font-medium tracking-tight placeholder:text-muted-foreground/30 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:bg-background/40 transition-all shadow-inner"
+                  className="w-full bg-zinc-900 border border-white/10 rounded-2xl pl-12 pr-32 py-4 text-[13px] font-bold tracking-tight placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 focus:bg-black transition-all shadow-2xl"
                 />
-                {searchInput && (
+                {searchInput.trim() && (
                   <button
                     onClick={handleSearchSubmit}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
                   >
-                    Load
+                    Analyze
                   </button>
                 )}
               </div>

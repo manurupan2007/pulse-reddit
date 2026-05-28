@@ -1,0 +1,46 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "pulse-intel",
+  "post": {
+    "dir": "public",
+    "entrypoints": {
+      "default": {
+        "inline": true,
+        "entry": "splash.html"
+      },
+      "game": {
+        "entry": "game.html"
+      }
+    }
+  },
+  "server": {
+    "dir": "dist/server",
+    "entry": "index.js"
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Create a new post",
+        "description": "pulse-intel",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/post-create"
+      }
+    ]
+  },
+  "triggers": {
+    "onAppInstall": "/internal/on-app-install",
+    "onPostSubmit": "/internal/triggers/post-submit",
+    "onCommentSubmit": "/internal/triggers/comment-submit",
+    "onCommentReport": "/internal/triggers/comment-report",
+    "onPostReport": "/internal/triggers/post-report",
+    "onModAction": "/internal/triggers/mod-action"
+  },
+  "scripts": {
+    "dev": "node --experimental-strip-types ./tools/build.ts --watch",
+    "build": "node --experimental-strip-types ./tools/build.ts --minify"
+  },
+  "dev": {
+    "subreddit": "pulse_intel_dev"
+  }
+}
